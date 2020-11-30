@@ -39,10 +39,12 @@ def load(relative_path,gcm,rcp,rp,version,date):
         try:
             hurs = xr.open_dataset(hurs_path)
         except:
-            print("Can't load hurs: " + hurs_path)
+            print("Can't load hurs: " + hurs_path) 
+            tas=[]
             hurs=[]
     except:
         print("Can't load tmp: "+ tas_path)
         tas=[]
+        hurs=[]
 
     return tas, hurs

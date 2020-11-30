@@ -6,15 +6,7 @@ Contains CORDEX data parameters for temperature and relative humidity.
 """
 
 rcps = ["rcp26", "rcp45", "rcp85"]
-vars = ["tas", "hurs"]
-gcms = [
-    "CNRM-CERFACS-CNRM-CM5",
-    "ICHEC-EC-EARTH",
-    "IPSL-IPSL-CM5A-MR",
-    "MOHC-HadGEM2-ES",
-    "MPI-M-MPI-ESM-LR",
-    "NCC-NorESM1-M",
-]
+gcms = ["CNRM-CERFACS-CNRM-CM5","ICHEC-EC-EARTH","IPSL-IPSL-CM5A-MR","MOHC-HadGEM2-ES","MPI-M-MPI-ESM-LR","NCC-NorESM1-M"]
 rps = ["r12i1p1", "r1i1p1"]
 versions = ["v1", "v1a"]
 
