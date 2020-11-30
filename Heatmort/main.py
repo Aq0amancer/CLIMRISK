@@ -11,11 +11,11 @@ from corrFunctions import load,corr2D # Import functions for correlation
 from pathCORDEX import * # Import path to CORDEX data
 
 rcps = ["rcp26", "rcp45", "rcp85"]
-gcms = ["CNRM-CERFACS-CNRM-CM5","ICHEC-EC-EARTH","IPSL-IPSL-CM5A-MR","MOHC-HadGEM2-ES","MPI-M-MPI-ESM-LR","NCC-NorESM1-M"]
+gcms = ["CNRM-CERFACS-CNRM-CM5","ICHEC-EC-EARTH","IPSL-IPSL-CM5A-MR","MPI-M-MPI-ESM-LR","NCC-NorESM1-M","MOHC-HadGEM2-ES"]
 rps = ["r12i1p1", "r1i1p1"]
 versions = ["v1", "v1a"]
 
-dates = [
+most_dates = [
     "20060101-20101231",
     "20110101-20151231",
     "20160101-20201231",
@@ -64,12 +64,11 @@ for gcm in gcms:
                 if gcm=='MOHC-HadGEM2-ES': # MohC has a different labelling for the dates
                     dates=mohc_dates
                 else:
-                    dates=dates
+                    dates=most_dates
                 for date in dates:
                     [tas,hurs]=load(CORDEX_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
                     if any(tas): # Is the model name correct?
                         corr2D(tas,hurs,CORDEX_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
-                        print('Completed corrMatrix for: ' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
 
 
 
