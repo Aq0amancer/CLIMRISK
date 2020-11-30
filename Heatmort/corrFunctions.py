@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
              
-def corr2D(tas,hurs,axis=0):
+def corr2D(tas,hurs,relative_path,gcm,rcp,rp,version,date):
     """
     Computes the correlation between temperature (tas) and relative humidity (hurs) for a 2-D grid.
     Axis specifies the time dimension. Returns a 2-D matrix of correlation values for every cell.
@@ -20,10 +20,10 @@ def corr2D(tas,hurs,axis=0):
     for lat in range(90):
         for lon in range(134):
             corrMatrix[lat,lon]=np.corrcoef(tas['tas'][:,lat,lon],hurs['hurs'][:,lat,lon])[1,0]
-    return corrMatrix
+    np.save(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".out",corrMatrix)
 
 
-def load(base_path,gcm,rcp,rp,version,date):
+def load(relative_path,gcm,rcp,rp,version,date):
     """
     This function loads the tas and hurs data from CORDEX for a given
     1. GCM
@@ -32,8 +32,8 @@ def load(base_path,gcm,rcp,rp,version,date):
     4. Version
     5. 5-year interval (between 2006 - 2100)
     """
-    tas_path = base_path + "/" + gcm + "/tas/" + rcp + "/" + "tas_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
-    hurs_path = base_path + "/" + gcm + "/hurs/" + rcp + "/" + "hurs_EUR-11_" + gcm + "_" + rcp+ "_"+ rp + "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
+    tas_path = relative_path + "/" + gcm + "/tas/" + rcp + "/" + "tas_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
+    hurs_path = relative_path + "/" + gcm + "/hurs/" + rcp + "/" + "hurs_EUR-11_" + gcm + "_" + rcp+ "_"+ rp + "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
     try:
         tas = xr.open_dataset(tas_path)
         try:
