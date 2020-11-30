@@ -5,8 +5,7 @@ CLIMRISK Model. Heatmort module.
 Contains CORDEX data parameters for temperature and relative humidity.
 """
 
-base_path = "\project\predragi\CORDEX"
-rcps = ["rcp26", "rcp45", "rcp60", "rcp85"]
+rcps = ["rcp26", "rcp45", "rcp85"]
 vars = ["tas", "hurs"]
 gcms = [
     "CNRM-CERFACS-CNRM-CM5",
@@ -19,7 +18,6 @@ gcms = [
 rps = ["r12i1p1", "r1i1p1"]
 versions = ["v1", "v1a"]
 
-filename = "remapped_hurs_patterns_EUR-11_CNRM-CERFACS-CNRM-CM5_rcp45_r1i1p1_SMHI-RCA4_v1_day_20110101-20151231.nc"
 dates = [
     "20060101-20101231",
     "20110101-20151231",
