@@ -9,6 +9,7 @@ import pandas
 import netCDF4
 from corrFunctions import load,corr2D # Import functions for correlation
 from pathCORDEX import * # Import path to CORDEX data
+from multiprocessing import Pool
 
 rcps = ["rcp26", "rcp45", "rcp85"]
 gcms = ["CNRM-CERFACS-CNRM-CM5","ICHEC-EC-EARTH","IPSL-IPSL-CM5A-MR","MPI-M-MPI-ESM-LR","NCC-NorESM1-M","MOHC-HadGEM2-ES"]
@@ -55,20 +56,30 @@ mohc_dates = [
     "20810101-20851230",
     "20860101-20901230",
     "20910101-20951230",
-    "20960101-20991230",]
+    "20960101-20991230"]
 
-for gcm in gcms:
-    for rcp in rcps:
-        for rp in rps:
-            for version in versions:
-                if gcm=='MOHC-HadGEM2-ES': # MohC has a different labelling for the dates
-                    dates=mohc_dates
-                else:
-                    dates=most_dates
-                for date in dates:
-                    [tas,hurs]=load(CORDEX_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
-                    if any(tas): # Is the model name correct?
-                        corr2D(tas,hurs,CORDEX_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
+def run(CORDEX_path,gcm,rcp,rp,version,date):
+    [tas,hurs]=load(CORDEX_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
+    if any(tas): # Is the model name correct?
+        corr2D(tas,hurs,CORDEX_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
+
+
+if __name__=='__main__':
+    pool = Pool() #use all available cores, otherwise specify the number you want as an argument
+    for gcm in gcms:
+        for rcp in rcps:
+            for rp in rps:
+                for version in versions:
+                    if gcm=='MOHC-HadGEM2-ES': # MohC has a different labelling for the dates
+                        dates=mohc_dates
+                    else:
+                        dates=most_dates
+                    for date in dates:
+                        pool.apply_async(run, args=(CORDEX_path,gcm,rcp,rp,version,date,))
+    pool.close()
+    pool.join()
+
+
 
 
 

@@ -21,9 +21,9 @@ def corr2D(tas,hurs,relative_path,gcm,rcp,rp,version,date):
     for lat in range(90):
         for lon in range(134):
             corrMatrix[lat,lon]=np.corrcoef(tas['tas'][:,lat,lon],hurs['hurs'][:,lat,lon])[1,0]
+            print('Completed: ' + str(round((lat+lon)*100/12060,2)) +'%')
     np.save(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".out",corrMatrix)
     print('Successful save: corrMatrix-' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
-
 
 
 def load(relative_path,gcm,rcp,rp,version,date):
