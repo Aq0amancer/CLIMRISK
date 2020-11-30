@@ -10,7 +10,8 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 import xarray as xr
-             
+from pathCORDEX import * # Import path to CORDEX data
+     
 def corr2D(tas,hurs,relative_path,gcm,rcp,rp,version,date):
     """
     Computes the correlation between temperature (tas) and relative humidity (hurs) for a 2-D grid.
