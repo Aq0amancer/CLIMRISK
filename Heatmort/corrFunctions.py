@@ -35,7 +35,7 @@ def load(relative_path,gcm,rcp,rp,version,date):
     5. 5-year interval (between 2006 - 2100)
     """
     tas_path = relative_path + "/" + gcm + "/tas/" + rcp + "/" + CORDEX_tas_prefix + "EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
-    hurs_path = relative_path + "/" + gcm + "/hurs/" + rcp + "/" + CORDEX_hurs_prefix +"EUR-11_" + gcm + "_" + rcp+ "_"+ rp + "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
+    hurs_path = relative_path + "/" + gcm + "/hurs/" + rcp + "/" + CORDEX_hurs_prefix + "EUR-11_" + gcm + "_" + rcp+ "_"+ rp + "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
     try:
         tas = xr.open_dataset(tas_path)
         try:
