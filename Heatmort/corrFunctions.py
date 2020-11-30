@@ -16,6 +16,12 @@ def corr2D(tas,hurs,axis=0):
     Computes the correlation between temperature (tas) and relative humidity (hurs) for a 2-D grid.
     Axis specifies the time dimension. Returns a 2-D matrix of correlation values for every cell.
     """
+    corrMatrix=np.zeros((90,134))
+    for lat in range(90):
+        for lon in range(134):
+            corrMatrix[lat,lon]=np.corrcoef(tas['tas'][:,lat,lon],hurs['hurs'][:,lat,lon])[1,0]
+    return corrMatrix
+
 
 def load(base_path,gcm,rcp,rp,version,date):
     """
@@ -26,15 +32,17 @@ def load(base_path,gcm,rcp,rp,version,date):
     4. Version
     5. 5-year interval (between 2006 - 2100)
     """
-    tas_path = base_path + "/" + gcm + "/tmp/" + rcp + "/" + "tas_EUR-11_"+ gcm+ "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date+ ".nc"
+    tas_path = base_path + "/" + gcm + "/tas/" + rcp + "/" + "tas_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
     hurs_path = base_path + "/" + gcm + "/hurs/" + rcp + "/" + "hurs_EUR-11_" + gcm + "_" + rcp+ "_"+ rp + "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
     try:
-        tas = nc.Dataset(tas_path)["tas"][:]
+        tas = xr.open_dataset(tas_path)
         try:
-            hurs = nc.Dataset(hurs_path)["hurs"][:]
+            hurs = xr.open_dataset(hurs_path)
         except:
             print("Can't load hurs: " + hurs_path)
+            hurs=[]
     except:
         print("Can't load tmp: "+ tas_path)
+        tas=[]
 
     return tas, hurs
