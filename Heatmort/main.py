@@ -22,7 +22,7 @@ for gcm in gcms:
                 for date in dates:
                     [tas,hurs]=load(CORDEX_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
                     if any(tas): # Is the model name correct?
-                        corr2D(tas,hurs,CORDEX_path + '/corrMatrix/',gcm,rcp,rp,version,date): # Calculate the correlation matrix
+                        corr2D(tas,hurs,CORDEX_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
                         print('Completed corrMatrix for: ' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
 
 
