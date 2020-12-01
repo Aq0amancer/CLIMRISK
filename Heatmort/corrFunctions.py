@@ -23,7 +23,7 @@ def corr2D(tas,hurs,relative_path,gcm,rcp,rp,version,date):
         for lon in range(134):
             corrMatrix[lat,lon]=np.corrcoef(tas['tas'][:,lat,lon],hurs['hurs'][:,lat,lon])[1,0]
             index=index+1
-            print('Completed: ' + str(round(index*100/12060,2)) +'%')
+            #print('Completed: ' + str(round(index*100/12060,2)) +'%')
     np.savetxt(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".csv", corrMatrix, delimiter=",")
     print('Successful save: corrMatrix-' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
 
