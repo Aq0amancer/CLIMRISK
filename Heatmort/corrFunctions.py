@@ -18,11 +18,13 @@ def corr2D(tas,hurs,relative_path,gcm,rcp,rp,version,date):
     Axis specifies the time dimension. Returns a 2-D matrix of correlation values for every cell.
     """
     corrMatrix=np.zeros((90,134))
+    index=0
     for lat in range(90):
         for lon in range(134):
             corrMatrix[lat,lon]=np.corrcoef(tas['tas'][:,lat,lon],hurs['hurs'][:,lat,lon])[1,0]
-            print('Completed: ' + str(round((lat+lon)*100/12060,2)) +'%')
-    np.save(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".out",corrMatrix)
+            index=index+1
+            print('Completed: ' + str(round(index*100/12060,2)) +'%')
+    np.savetxt(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".csv", corrMatrix, delimiter=",")
     print('Successful save: corrMatrix-' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
 
 
