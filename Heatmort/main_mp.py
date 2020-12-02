@@ -61,7 +61,7 @@ mohc_dates = [
 def run(project_path,gcm,rcp,rp,version,date):
     [tas,hurs]=load(project_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
     if any(tas): # Is the model name correct?
-        corrMatrix=corr2D(tas,hurs,project_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
+        corrMatrix=corr2D(tas,hurs) # Calculate the correlation matrix
         save(corrMatrix,project_path,gcm,rcp,rp,version,date) # save the corrMatrix file
 
 if __name__=='__main__':

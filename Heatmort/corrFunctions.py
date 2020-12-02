@@ -12,7 +12,7 @@ import numpy as np
 import xarray as xr
 from pathCORDEX import * # Import path to CORDEX data
      
-def corr2D(tas,hurs,relative_path,gcm,rcp,rp,version,date):
+def corr2D(tas,hurs):
     """
     Computes the correlation between temperature (tas) and relative humidity (hurs) for a 2-D grid.
     Axis specifies the time dimension. Returns a 2-D matrix of correlation values for every cell.
