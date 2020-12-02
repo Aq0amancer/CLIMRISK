@@ -7,7 +7,7 @@ Main document to run anaylsis.
 
 import pandas
 import netCDF4
-from corrFunctions import load,corr2D # Import functions for correlation
+from corrFunctions import * # Import functions for correlation
 from pathCORDEX import * # Import path to CORDEX data
 
 rcps = ["rcp26", "rcp45", "rcp85"]
@@ -57,10 +57,11 @@ mohc_dates = [
     "20910101-20951230",
     "20960101-20991230"]
 
-def run(CORDEX_path,gcm,rcp,rp,version,date):
-    [tas,hurs]=load(CORDEX_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
+def run(project_path,gcm,rcp,rp,version,date):
+    [tas,hurs]=load(project_path,gcm,rcp,rp,version,date) # Load the tas and hurs data
     if any(tas): # Is the model name correct?
-        corr2D(tas,hurs,CORDEX_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
+        corrMatrix=corr2D(tas,hurs,project_path + '/corrMatrix/',gcm,rcp,rp,version,date) # Calculate the correlation matrix
+        save(corrMatrix,project_path,gcm,rcp,rp,version,date) # save the corrMatrix file
 
 
 for gcm in gcms:
@@ -72,7 +73,7 @@ for gcm in gcms:
                 else:
                     dates=most_dates
                 for date in dates:
-                    run(CORDEX_path,gcm,rcp,rp,version,date)
+                    run(project_path,gcm,rcp,rp,version,date)
 
 
 
