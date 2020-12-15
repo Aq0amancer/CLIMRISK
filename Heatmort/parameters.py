@@ -12,7 +12,7 @@ versions = ["v1", "v1a"]
 vars=["tas","hurs"]
 rcms=["SMHI-RCA4"]
 
-dates = [
+most_dates = [
     "20060101-20101231",
     "20110101-20151231",
     "20160101-20201231",
