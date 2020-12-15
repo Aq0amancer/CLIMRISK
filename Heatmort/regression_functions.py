@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 from IO_functions import *
+from parameters import *
 
 for gcm in gcms:
     for rcp in rcps:
