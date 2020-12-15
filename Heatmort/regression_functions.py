@@ -23,5 +23,5 @@ for gcm in gcms:
                     else:
                         dates=most_dates
                     for date in dates:
-                        tas=load(CORDEX_path,var,gcm,rcp,rp,rcm,version,date)
-                        hurs=load(CORDEX_path,var,gcm,rcp,rp,rcm,version,date)
+                        tas=load(CORDEX_path,'tas',gcm,rcp,rp,rcm,version,date)
+                        hurs=load(CORDEX_path,'hurs',gcm,rcp,rp,rcm,version,date)
