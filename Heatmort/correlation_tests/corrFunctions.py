@@ -25,34 +25,3 @@ def corr2D(tas,hurs):
             index=index+1
             #print('Completed: ' + str(round(index*100/12060,2)) +'%')
     return corrMatrix
-
-def save(corrMatrix,relative_path,gcm,rcp,rp,version,date):
-    np.savetxt(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".csv", corrMatrix, delimiter=",")
-    print('Successful save: corrMatrix-' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
-
-def load(relative_path,gcm,rcp,rp,version,date):
-    """
-    This function loads the tas and hurs data from CORDEX for a given
-    1. GCM
-    2. RCP scenario
-    3. RP
-    4. Version
-    5. 5-year interval (between 2006 - 2100)
-    """
-    tas_path = relative_path + "/" + gcm + "/tas/" + rcp + "/" + CORDEX_tas_prefix + "EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
-    hurs_path = relative_path + "/" + gcm + "/hurs/" + rcp + "/" + CORDEX_hurs_prefix + "EUR-11_" + gcm + "_" + rcp+ "_"+ rp + "_SMHI-RCA4_"+ version+ "_day_"+ date + ".nc"
-    try:
-        tas = xr.open_dataset(tas_path)
-        try:
-            hurs = xr.open_dataset(hurs_path)
-            print("Successful load: "+ tas_path)
-        except Exception as e: 
-            print(e)
-            tas=[]
-            hurs=[]
-    except Exception as e: 
-        print(e)
-        tas=[]
-        hurs=[]
-
-    return tas, hurs

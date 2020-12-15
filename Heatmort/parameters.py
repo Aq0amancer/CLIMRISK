@@ -9,6 +9,8 @@ rcps = ["rcp26", "rcp45", "rcp85"]
 gcms = ["CNRM-CERFACS-CNRM-CM5","ICHEC-EC-EARTH","IPSL-IPSL-CM5A-MR","MOHC-HadGEM2-ES","MPI-M-MPI-ESM-LR","NCC-NorESM1-M"]
 rps = ["r12i1p1", "r1i1p1"]
 versions = ["v1", "v1a"]
+vars=["tas","hurs"]
+rcms=["SMHI-RCA4"]
 
 dates = [
     "20060101-20101231",
