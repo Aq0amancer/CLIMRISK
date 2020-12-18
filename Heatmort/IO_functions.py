@@ -25,12 +25,33 @@ def load(relative_path,var,gcm,rcp,rp,rcm,version,date):
     4. Version
     5. 5-year interval (between 2006 - 2100)
     """
-    data_path = relative_path + "/" + gcm + "/" + var + "/" + rcp + "/" + var + "_EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".nc"
+    data_path = relative_path + "/" + gcm + "/" + var + "/" + rcp + "/remapped_" + var + "_EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".nc"
     try:
         data = xr.open_dataset(data_path)
         print("Successful load: "+ data_path)
     except Exception as e: 
-        print(e)
+        #print(e)
+        data=[]
+
+    return data
+
+def month_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,version,year,month):
+    
+    """
+    This function loads the data from CORDEX for a given month
+    """
+    if gcm=='MOHC-HadGEM2-ES': # MohC has a different labelling for the dates
+        date=mohc_dates[np.where((years==year))[0][0]] # Index the correct file, corresponding to year
+    else:
+        date=most_dates[np.where((years==year))[0][0]]
+    data_path = relative_path + "/" + gcm + "/" + var + "/" + rcp + "/remapped_" + var + "_EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".nc"
+                    
+    try:
+        data = xr.open_dataset(data_path)
+        data=data.sel(time=year + "-" + month)
+        #print("Successful load: "+ data_path)
+    except Exception as e: 
+        #print(e)
         data=[]
 
     return data

@@ -1,0 +1,57 @@
+## Statistics
+import statsmodels.api as sm
+import numpy as np
+from sklearn.model_selection import StratifiedKFold, KFold
+
+def meanNormRMSE(predictions, targets):
+    return (np.sqrt((predictions-targets) **2).mean())/targets.mean()
+
+def simpleOLS(X,y):
+    X=sm.add_constant(X)
+    model = sm.OLS(y, X).fit() 
+    return model
+
+def crossValidateKfold(X,y,folds,with_constant='Yes',stratified='No'):
+    """
+    This function creates K-fold stratified samples and runs an OLS
+    regression on it.
+    Returns cross validated coefficients, adj R^2 and RMSE.
+    """
+    X=np.array(X) # Initialize X array
+    y=np.array(y) # Initialize y array
+
+    if with_constant == 'Yes':
+        X = sm.add_constant(X) # adding a constant
+        #print('Add constant')
+    if stratified == 'Yes':
+        skf = StratifiedKFold(n_splits=folds) # initalize the stratification
+        split=skf.split(X,y) # Stratified split based on X,y
+    else:
+        skf=KFold(n_splits=folds)
+        split=skf.split(X) # Split data based on X
+    
+    # Initialize new arrays to store coefficients, adjR2 and NRMSE.
+    mean_norm_rmse=np.zeros([folds,1])
+    adj_r_sq=np.zeros([folds,1])
+    coefficients=np.zeros([folds,X.shape[1]])
+
+    for index, [train_index,test_index] in enumerate(split):
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]    
+
+        model = sm.OLS(y_train, X_train).fit()
+
+        coefficients[index,:]=model.params
+        adj_r_sq[index]=model.rsquared_adj
+        predictions=model.predict(X_test)
+        mean_norm_rmse[index]=meanNormRMSE(predictions,y_test)
+
+    cross_validated_coefficients=np.mean(coefficients,axis=0)
+    cross_validated_adj_r_sq=adj_r_sq.mean()
+    cross_validated_rmse=mean_norm_rmse.mean()
+    return cross_validated_coefficients,cross_validated_adj_r_sq,cross_validated_rmse#, coefficients, pvals, adj_r_sq
+
+def multicol(data):
+    corr = np.corrcoef(data, rowvar=0) 
+    value, vector = np.linalg.eig(corr)
+    return value, vector
