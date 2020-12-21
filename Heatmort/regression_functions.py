@@ -24,7 +24,7 @@ import time
 # Parameters
 folds= 5
 year_begin=2010
-year_end=2015
+year_end=2010
 number_of_months=(year_end-year_begin+1)*12
 
 coef=np.zeros((90,134,2))
@@ -32,7 +32,7 @@ adjr2=np.zeros((number_of_months,90,134))
 rmse=np.zeros((number_of_months,90,134))
 month_count=0 #start counting months
 
-for year in range(year_begin,year_end):
+for year in range(year_begin,year_end+1):
     for month in range(1,13):
         tas_all_month=[]
         hurs_all_month=[]
