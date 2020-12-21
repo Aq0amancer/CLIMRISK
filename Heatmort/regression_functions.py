@@ -49,8 +49,7 @@ for year in range(2006,2010):
                                 else:
                                     hurs_all_month=hurs
                             except Exception as e: 
-                                #print(e)
-                                x=0
+                                print(e)
         #print(tas_all_month.sizes)
         for lat in range(1):
             for lon in range(5):
@@ -61,7 +60,7 @@ for year in range(2006,2010):
                     print(str(month) + '/' + str(year) + ' finished')     
                 except Exception as e: 
                     print(e)
-                    pass
+                    #pass
         month_count=month_count+1 # increment month
 
 # Load monthly time mask
