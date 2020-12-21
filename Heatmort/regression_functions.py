@@ -22,10 +22,10 @@ import time
     Need to make functions per month, check how well it does.
 """
 # Parameters
-folds= 10
+folds= 5
 year_begin=2010
-year_end=2100
-number_of_months=(year-end-year_begin+1)*12
+year_end=2015
+number_of_months=(year_end-year_begin+1)*12
 
 coef=np.zeros((90,134,2))
 adjr2=np.zeros((number_of_months,90,134))
