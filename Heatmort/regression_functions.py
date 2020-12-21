@@ -26,7 +26,7 @@ adjr2=np.zeros((1140,90,134))
 rmse=np.zeros((1140,90,134))
 month_count=0 #start counting months
 
-for year in range(2006,2010):
+for year in range(2006,2100):
     for month in range(1,13):
         tas_all_month=[]
         hurs_all_month=[]
