@@ -12,7 +12,7 @@ import numpy as np
 import xarray as xr
 from pathCORDEX import * # Import path to CORDEX data
 
-def save(corrMatrix,relative_path,gcm,rcp,rp,rcm,version,date):
+def saveReg(relative_path,coefs,adjr2,rmse):
     np.savetxt(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".csv", corrMatrix, delimiter=",")
     print('Successful save: corrMatrix-' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
 

@@ -14,6 +14,7 @@ from IO_functions import *
 from parameters import *
 import statsmodels.api as sm
 from statsFunc import crossValidateKfold
+from pathCORDEX import *
 
 """ Try loading less data so that it fits into the matrix.
     Need to make functions per month, check how well it does.
@@ -21,10 +22,11 @@ from statsFunc import crossValidateKfold
 # Parameters
 folds= 10
 coef=np.zeros((90,134,2))
-adjr2=np.zeros((90,134))
-rmse=np.zeros((90,134))
+adjr2=np.zeros((1140,90,134))
+rmse=np.zeros((1140,90,134))
+month_count=0 #start counting months
 
-for year in range(2010,2100):
+for year in range(2006,2010):
     for month in range(1,13):
         tas_all_month=[]
         hurs_all_month=[]
@@ -40,23 +42,43 @@ for year in range(2010,2100):
                                 # Concatenate
                                 if any(tas_all_month):
                                     tas_all_month=xr.concat([tas_all_month, tas], dim="time")
-                                    hurs_all_month=xr.concat([hurs_all_month, hurs], dim="time")
                                 else:
                                     tas_all_month=tas
+                                if any(hurs_all_month):
+                                    hurs_all_month=xr.concat([hurs_all_month, hurs], dim="time")
+                                else:
                                     hurs_all_month=hurs
                             except Exception as e: 
-                                pass
-        
-        # Regression
-        # Might have to do per cell
-        for lat in range(90):
-            for lon in range(134):
+                                #print(e)
+                                x=0
+        #print(tas_all_month.sizes)
+        for lat in range(1):
+            for lon in range(5):
                 tas_cell_month=tas_all_month['tas'][:,lat,lon]
                 hurs_cell_month=hurs_all_month['hurs'][:,lat,lon]
                 try:
-                    coef[lat,lon,:],adjr2[lat,lon],rmse[lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,10)  
+                    coef[month,lat,lon,:],adjr2[month,lat,lon],rmse[month,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,folds)  
                     print(str(month) + '/' + str(year) + ' finished')     
                 except Exception as e: 
-                    #print(e)
+                    print(e)
                     pass
+        month_count=month_count+1 # increment month
 
+# Load monthly time mask
+monthly_mask = xr.open_dataset("monthly_time.nc")
+
+# Convert adjr2 and rmse data to xarray.Dataset format
+ds = xr.Dataset(
+    data_vars=dict(
+        adjr2=(["time", "lat", "lon"], adjr2),
+        rmse=(["time", "lat", "lon"], rmse),
+    ),
+    coords=dict(
+        lon=(['lon'], hurs_all_month['lon']),
+        lat=(["lat"], hurs_all_month['lat']),
+        time=monthly_mask['time'],
+    ),
+    attrs=dict(description="Monthly Adj. R^2 and RMSE results for tas/hurs relationships."))
+
+# Save to NCDF4
+ds.to_netcdf(CORDEX_path + "test_output.nc")
