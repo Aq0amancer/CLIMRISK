@@ -57,7 +57,7 @@ for year in range(2006,2010):
                 tas_cell_month=tas_all_month['tas'][:,lat,lon]
                 hurs_cell_month=hurs_all_month['hurs'][:,lat,lon]
                 try:
-                    coef[month,lat,lon,:],adjr2[month,lat,lon],rmse[month,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,folds)  
+                    coef[lat,lon,:],adjr2[month,lat,lon],rmse[month,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,folds)  
                     print(str(month) + '/' + str(year) + ' finished')     
                 except Exception as e: 
                     print(e)
@@ -65,7 +65,7 @@ for year in range(2006,2010):
         month_count=month_count+1 # increment month
 
 # Load monthly time mask
-monthly_mask = xr.open_dataset("monthly_time.nc")
+monthly_mask = xr.open_dataset("/Heatmort/monthly_time.nc")
 
 # Convert adjr2 and rmse data to xarray.Dataset format
 ds = xr.Dataset(
