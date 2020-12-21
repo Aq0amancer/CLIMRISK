@@ -49,19 +49,21 @@ for year in range(2006,2100):
                                 else:
                                     hurs_all_month=hurs
                             except Exception as e: 
-                                print(e)
+                                #print('Concat loop: ' + str(e))
+                                pass
         #print(tas_all_month.sizes)
-        for lat in range(1):
-            for lon in range(5):
+        for lat in range(90):
+            for lon in range(134):
                 tas_cell_month=tas_all_month['tas'][:,lat,lon]
                 hurs_cell_month=hurs_all_month['hurs'][:,lat,lon]
                 try:
                     coef[lat,lon,:],adjr2[month,lat,lon],rmse[month,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,folds)  
-                    print(str(month) + '/' + str(year) + ' finished')     
                 except Exception as e: 
-                    print(e)
+                    print('K-fold loop: ' + str(e))
                     #pass
         month_count=month_count+1 # increment month
+        print(str(month) + '/' + str(year) + ' finished')     
+
 
 # Load monthly time mask
 monthly_mask = xr.open_dataset("/Heatmort/monthly_time.nc")
