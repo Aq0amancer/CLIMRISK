@@ -23,12 +23,16 @@ import time
 """
 # Parameters
 folds= 10
+year_begin=2010
+year_end=2100
+number_of_months=(year-end-year_begin+1)*12
+
 coef=np.zeros((90,134,2))
-adjr2=np.zeros((1140,90,134))
-rmse=np.zeros((1140,90,134))
+adjr2=np.zeros((number_of_months,90,134))
+rmse=np.zeros((number_of_months,90,134))
 month_count=0 #start counting months
 
-for year in range(2006,2100):
+for year in range(year_begin,year_end):
     for month in range(1,13):
         tas_all_month=[]
         hurs_all_month=[]
