@@ -15,6 +15,8 @@ from parameters import *
 import statsmodels.api as sm
 from statsFunc import crossValidateKfold
 from pathCORDEX import *
+import time
+
 
 """ Try loading less data so that it fits into the matrix.
     Need to make functions per month, check how well it does.
@@ -30,6 +32,7 @@ for year in range(2006,2100):
     for month in range(1,13):
         tas_all_month=[]
         hurs_all_month=[]
+        start = time.time()
         for gcm in gcms:
             for rcp in rcps:
                 for rp in rps:
@@ -62,7 +65,8 @@ for year in range(2006,2100):
                     print('K-fold loop: ' + str(e))
                     #pass
         month_count=month_count+1 # increment month
-        print(str(month) + '/' + str(year) + ' finished')
+        end = time.time()
+        print(str(month) + '/' + str(year) + ' finished in ' + str(end - start) + ' seconds')
 
 
 # Load monthly time mask
