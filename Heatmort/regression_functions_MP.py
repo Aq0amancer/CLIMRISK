@@ -76,7 +76,7 @@ def runRegressions(year_begin,year_end,reg_type):
                     try:
                         adjr2[month_count,lat,lon],rmse[month_count,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,number_of_coefs,reg_type,folds,stratified='No')
                     except Exception as e:
-                        print('K-fold loop: ' + str(e))
+                        #print('K-fold loop: ' + str(e))
                         pass
 
             month_count=month_count+1 # increment month
