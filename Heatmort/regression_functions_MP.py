@@ -70,8 +70,8 @@ def runRegressions(year_begin,year_end,reg_type):
                 for lon in range(134):
                     tas_cell_month=tas_all_month['tas'][:,lat,lon]
                     hurs_cell_month=hurs_all_month['hurs'][:,lat,lon]
-                    tas_cell_month=np.vstack(np.array(tas_cell_month))
-                    hurs_cell_month=np.vstack(np.array(hurs_cell_month))
+                    tas_cell_month=np.vstack(np.array(tas_cell_month,dtype=np.float64))
+                    hurs_cell_month=np.vstack(np.array(hurs_cell_month,dtype=np.float64))
                     #print(tas_cell_month.shape)
                     try:
                         adjr2[month_count,lat,lon],rmse[month_count,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,number_of_coefs,reg_type,folds,stratified='No')
