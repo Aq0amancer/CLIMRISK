@@ -24,11 +24,9 @@ import time
 # Parameters
 folds= 5
 year_begin=2010
-month_begin=1
 year_end=2010
-month_end=5
 
-number_of_months=(year_end-year_begin+1)*(month_end+1-month_begin)
+number_of_months=(year_end-year_begin+1)*12
 
 coef=np.zeros((90,134,2))
 adjr2=np.zeros((number_of_months,90,134))
@@ -36,7 +34,7 @@ rmse=np.zeros((number_of_months,90,134))
 month_count=0 #start counting months
 
 for year in range(year_begin,year_end+1):
-    for month in range(month_begin,month_end):
+    for month in range(1,13):
         tas_all_month=[]
         hurs_all_month=[]
         start = time.time()
@@ -67,7 +65,7 @@ for year in range(year_begin,year_end+1):
                 tas_cell_month=tas_all_month['tas'][:,lat,lon]
                 hurs_cell_month=hurs_all_month['hurs'][:,lat,lon]
                 try:
-                    coef[lat,lon,:],adjr2[month,lat,lon],rmse[month,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,folds)
+                    coef[lat,lon,:],adjr2[month-1,lat,lon],rmse[month-1,lat,lon]=crossValidateKfold(tas_cell_month,hurs_cell_month,folds)
                 except Exception as e:
                     print('K-fold loop: ' + str(e))
                     #pass
@@ -77,7 +75,7 @@ for year in range(year_begin,year_end+1):
 
 
 # Load monthly time mask
-monthly_mask = xr.open_dataset("/Heatmort/monthly_time.nc")
+monthly_mask = xr.open_dataset("monthly_time.nc")
 
 # Convert adjr2 and rmse data to xarray.Dataset format
 ds = xr.Dataset(
@@ -88,9 +86,9 @@ ds = xr.Dataset(
     coords=dict(
         lon=(['lon'], hurs_all_month['lon']),
         lat=(["lat"], hurs_all_month['lat']),
-        time=monthly_mask['time'],
+        time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
     ),
     attrs=dict(description="Monthly Adj. R^2 and RMSE results for tas/hurs relationships."))
 
 # Save to NCDF4
-ds.to_netcdf(CORDEX_path + "test_output.nc")
+ds.to_netcdf("test_output.nc")
