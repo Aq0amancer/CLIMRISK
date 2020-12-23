@@ -85,23 +85,23 @@ def runRegressions(year_begin,year_end,reg_type):
 
 
     # Load monthly time mask
-    monthly_mask = xr.open_dataset("monthly_time.nc")
-
+    with xr.open_dataset("merged_monthly.nc") as monthly_mask:
     # Convert adjr2 and rmse data to xarray.Dataset format
-    ds = xr.Dataset(
-        data_vars=dict(
-            adjr2=(["time", "lat", "lon"], adjr2),
-            rmse=(["time", "lat", "lon"], rmse),
-        ),
-        coords=dict(
-            lon=(['lon'], hurs_all_month['lon']),
-            lat=(["lat"], hurs_all_month['lat']),
-            time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
-        ),
-        attrs=dict(description="Monthly Adj. R^2 and RMSE results for tas/hurs relationships."))
+        ds = xr.Dataset(
+            data_vars=dict(
+                adjr2=(["time", "lat", "lon"], adjr2),
+                rmse=(["time", "lat", "lon"], rmse),
+                time_bnds=monthly_mask['time_bnds']
+            ),
+            coords=dict(
+                lon=(['lon'], hurs_all_month['lon']),
+                lat=(["lat"], hurs_all_month['lat']),
+                time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
+            ),
+            attrs=dict(description="Monthly Adj. R^2 and RMSE results for tas/hurs relationships."))
 
-    # Save to NCDF4
-    ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_test_output.nc")
+        # Save to NCDF4
+        ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_test_output.nc")
 
 
 runRegressions(year_begin,year_end,reg_type)
