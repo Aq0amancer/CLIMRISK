@@ -55,7 +55,6 @@ def multicol(data):
     value, vector = np.linalg.eig(corr)
     return value, vector
 
-
 def crossValidateKfold(X,y,number_of_coefs,reg_type,folds,stratified):
     """
     This function creates K-fold stratified samples and runs an OLS
