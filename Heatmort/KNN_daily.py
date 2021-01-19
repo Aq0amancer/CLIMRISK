@@ -12,8 +12,9 @@ import numpy as np
 import xarray as xr
 from IO_functions import *
 from parameters import *
-import statsmodels.api as sm
-from statsFunc import crossValidateKfold
+#import statsmodels.api as sm
+from sklearn import neighbors
+#from statsFunc import crossValidateKfold
 from pathCORDEX import *
 import time
 import sys
@@ -22,6 +23,9 @@ import sys
 year_begin=int(sys.argv[1]) # get first year argument from bash
 year_end=int(sys.argv[2]) # get last year argument from bash
 reg_type=sys.argv[3] # get regression type from bash
+
+# Setup nearest-neighbours function
+knn = neighbors.KNeighborsRegressor(n_neighbors, weights=weights)
 
 def runRegressions(year_begin,year_end,reg_type):
 
@@ -32,11 +36,7 @@ def runRegressions(year_begin,year_end,reg_type):
         formula='y ~ I(x**2) + x'
         number_of_coefs=2
     
-    folds= 2 #number of folds for
     number_of_months=(year_end-year_begin+1)*12
-    coef=np.zeros((number_of_months,90,134,number_of_coefs))
-    adjr2=np.zeros((number_of_months,90,134))
-    rmse=np.zeros((number_of_months,90,134))
     month_count=0 #start counting months
 
     for year in range(year_begin,year_end+1):
@@ -68,12 +68,12 @@ def runRegressions(year_begin,year_end,reg_type):
         for lat in range(90):
             for lon in range(134):
                 for day in range(1825): # for every day, do KNN regression
-                    tas_cell_day=tas_all_year['tas'][:,day,lat,lon]
-                    hurs_cell_day=hurs_all_year['hurs'][:,day,lat,lon]
-                    tas_cell_day=np.vstack(np.array(tas_cell_day,dtype=np.float64))
-                    hurs_cell_day=np.vstack(np.array(hurs_cell_day,dtype=np.float64))
-                    try:
-                        adjr2[month_count,lat,lon],rmse[month_count,lat,lon]=crossValidateKfold(tas_cell_day,hurs_cell_day,number_of_coefs,reg_type,folds,stratified='No')
+                    tas_cell_day_train=tas_all_year['tas'][:,day,lat,lon]
+                    hurs_cell_day_train=hurs_all_year['hurs'][:,day,lat,lon]
+                    tas_cell_day_train=np.vstack(np.array(tas_cell_day_train,dtype=np.float64))
+                    hurs_cell_day_train=np.vstack(np.array(hurs_cell_day_train,dtype=np.float64))
+                    try: # Try KNN
+                        y_ = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(tas_cell_day_CLIMRISK)
                     except Exception as e:
                         #print('K-fold loop: ' + str(e))
                         pass

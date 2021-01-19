@@ -91,7 +91,7 @@ def runRegressions(year_begin,year_end,reg_type):
             data_vars=dict(
                 adjr2=(["time", "lat", "lon"], adjr2),
                 rmse=(["time", "lat", "lon"], rmse),
-                time_bnds=monthly_mask['time_bnds']
+                time_bnds=(["time", "bnds"], monthly_mask['time_bnds'])
             ),
             coords=dict(
                 lon=(['lon'], hurs_all_month['lon']),
