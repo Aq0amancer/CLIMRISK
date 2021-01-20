@@ -82,7 +82,6 @@ def runRegressions(year_begin,year_end,reg_type):
         end = time.time()
         print(str(month) + '/' + str(year) + ' finished in ' + str(end - start) + ' seconds')
 
-
 # Load monthly time mask
 with xr.open_dataset("merged_monthly.nc") as monthly_mask:
 # Convert adjr2 and rmse data to xarray.Dataset format
