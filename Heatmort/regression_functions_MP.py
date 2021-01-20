@@ -34,7 +34,6 @@ def runRegressions(year_begin,year_end,reg_type):
     
     folds= 2 #number of folds for
     number_of_months=(year_end-year_begin+1)*12
-    coef=np.zeros((number_of_months,90,134,number_of_coefs))
     adjr2=np.zeros((number_of_months,90,134))
     rmse=np.zeros((number_of_months,90,134))
     month_count=0 #start counting months
@@ -82,7 +81,6 @@ def runRegressions(year_begin,year_end,reg_type):
             month_count=month_count+1 # increment month
             end = time.time()
             print(str(month) + '/' + str(year) + ' finished in ' + str(end - start) + ' seconds')
-
 
     # Load monthly time mask
     with xr.open_dataset("merged_monthly.nc") as monthly_mask:
