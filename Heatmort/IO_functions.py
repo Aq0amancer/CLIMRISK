@@ -77,6 +77,6 @@ def year_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,versi
 
     return data
 
-def patterns2tas(percentile,annual_tas):
+#def patterns2tas(percentile,annual_tas):
 
 
