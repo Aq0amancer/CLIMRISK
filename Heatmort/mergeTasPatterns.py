@@ -12,7 +12,10 @@ from sklearn import neighbors
 from pathCORDEX import *
 import time
 import sys
- 
+
+year_begin=2006
+year_end=2100
+
 for year in range(year_begin,year_end+1):
     tas_all_year=[]
     for gcm in gcms:
@@ -22,12 +25,14 @@ for year in range(year_begin,year_end+1):
                     for version in versions:
                         # Load data
                         try:
-                            tas=year_load(CORDEX_path,mohc_dates,most_dates,years,'tas',gcm,rcp,rp,rcm,version,str(year)).expand_dims({'obs':1}) # Expand the dimension for observations
+                            tas=year_load(CORDEX_path,mohc_dates,most_dates,years,'remapped_tas_patterns',gcm,rcp,rp,rcm,version,str(year)).expand_dims({'obs':1}) # Expand the dimension for observations
                             # Concatenate
                             if any(tas_all_year):
                                 tas_all_year=xr.concat([tas_all_year, tas], dim="obs")
                             else:
                                 tas_all_year=tas
+                        except Exception as e:
+                        #print('K-fold loop: ' + str(e))
+                            pass
 
-
-tas_all_year.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_test_output.nc")
+tas_all_year.to_dataframe.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_test_output.nc")
