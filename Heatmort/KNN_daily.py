@@ -65,6 +65,7 @@ def runRegressions(year_begin,year_end,reg_type):
                                 pass
         #print(tas_all_year.sizes)
         start = time.time()
+        climrisk_tas = scipy.io.loadmat('CLIMRISK_RCP2.6_SSP1_IIASA_50pctl_50climsens.mat') # Load already converted climarisk temperatures
         for lat in range(90):
             for lon in range(134):
                 for day in range(1825): # for every day, do KNN regression
@@ -73,7 +74,7 @@ def runRegressions(year_begin,year_end,reg_type):
                     tas_cell_day_train=np.vstack(np.array(tas_cell_day_train,dtype=np.float64))
                     hurs_cell_day_train=np.vstack(np.array(hurs_cell_day_train,dtype=np.float64))
                     try: # Try KNN
-                        y_ = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(tas_cell_day_CLIMRISK)
+                        climrisk_hurs = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(climrisk_tas[day,lat,lon])
                     except Exception as e:
                         #print('K-fold loop: ' + str(e))
                         pass
@@ -89,7 +90,7 @@ with xr.open_dataset("merged_monthly.nc") as monthly_mask:
         data_vars=dict(
             adjr2=(["time", "lat", "lon"], adjr2),
             rmse=(["time", "lat", "lon"], rmse),
-            time_bnds=monthly_mask['time_bnds']
+            time_bnds=(["time", "bnds"], monthly_mask['time_bnds'][(year_begin-2006)*12:(year_end+1-2006)*12])
         ),
         coords=dict(
             lon=(['lon'], hurs_all_year['lon']),

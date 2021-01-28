@@ -6,7 +6,7 @@ from sklearn.model_selection import StratifiedKFold, KFold
 import pandas as pd
 
 def meanNormRMSE(predictions, targets):
-    return (np.sqrt((predictions-targets) **2).mean())/targets.mean()
+    return (np.sqrt((targets-predictions) **2).mean())/targets.mean()
 
 
 def crossValidateKfoldFormula(X,y,number_of_coefs,formula,folds,stratified):
