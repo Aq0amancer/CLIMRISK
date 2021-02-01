@@ -38,21 +38,21 @@ def mergeTasPatterns(year_begin,year_end):
                             #print('K-fold loop: ' + str(e))
                                 pass
 
-    with xr.open_dataset("merged_monthly.nc") as monthly_mask:
-    # Convert adjr2 and rmse data to xarray.Dataset format
-        ds = xr.Dataset(
-            data_vars=dict(
-                tas_patterns=(["obs","time", "lat", "lon"], tas_all_year),
-                time_bnds=(["time", "bnds"], monthly_mask['time_bnds'][(year_begin-2006)*12:(year_end+1-2006)*12])
-            ),
-            coords=dict(
-                lon=(['lon'], tas_all_year['lon']),
-                lat=(["lat"], tas_all_year['lat']),
-                time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
-            ),
-            attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
+    monthly_mask=xr.open_dataset("merged_monthly.nc")
+    tas=year_load(CORDEX_path,mohc_dates,most_dates,years,'tas','ICHEC-EC-EARTH','rcp85','r12i1p1','SMHI-RCA4','v1','2006').expand_dims({'obs':1})
+    ds = xr.Dataset(
+        data_vars=dict(
+            tas_patterns=(["time", "lat", "lon","obs"], tas_all_year['tas'][:,time,lat,lon]),
+            time_bnds=(["time", "bnds"], monthly_mask['time_bnds'][(year_begin-2006)*12:(year_end+1-2006)*12])
+        ),
+        coords=dict(
+            lon=(['lon'], tas['lon']),
+            lat=(["lat"], tas['lat']),
+            time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
+        ),
+        attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
 
-        # Save to NCDF4
-        ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
+    # Save to NCDF4
+    ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
 
 mergeTasPatterns(year_begin,year_end)
