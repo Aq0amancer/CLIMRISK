@@ -47,7 +47,7 @@ def mergeTasPatterns(year_begin,year_end):
                 lat=(["lat"], monthly_mask['lat']),
                 time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
             ),
-            attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end))
+            attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
 
         # Save to NCDF4
         ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
