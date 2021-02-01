@@ -46,8 +46,8 @@ def mergeTasPatterns(year_begin,year_end):
                 time_bnds=(["time", "bnds"], monthly_mask['time_bnds'][(year_begin-2006)*12:(year_end+1-2006)*12])
             ),
             coords=dict(
-                lon=(['lon'], monthly_mask['lon']),
-                lat=(["lat"], monthly_mask['lat']),
+                lon=(['lon'], tas['lon']),
+                lat=(["lat"], tas['lat']),
                 time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
             ),
             attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
