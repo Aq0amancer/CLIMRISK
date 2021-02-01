@@ -69,6 +69,26 @@ def year_load_patterns(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,
                     
     try:
         data = xr.open_dataset(data_path)
+        #print("Successful load: "+ data_path)
+    except Exception as e: 
+        #print(e)
+        data=[]
+
+    return data
+
+def year_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,version,year):
+    
+    """
+    This function loads the data from CORDEX for a given month
+    """
+    if gcm=='MOHC-HadGEM2-ES': # MohC has a different labelling for the dates
+        date=mohc_dates[np.where((years==year))[0][0]] # Index the correct file, corresponding to year
+    else:
+        date=most_dates[np.where((years==year))[0][0]]
+    data_path = relative_path + "/" + gcm + "/" + var + "/" + rcp + "/remapped_" + var + "_patterns_EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".nc"
+                    
+    try:
+        data = xr.open_dataset(data_path)
         data=data.sel(time=year)
         #print("Successful load: "+ data_path)
     except Exception as e: 
