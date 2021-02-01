@@ -13,6 +13,9 @@ from pathCORDEX import *
 import time
 import sys
 
+# Bash parameters
+year_begin=int(sys.argv[1]) # get first year argument from bash
+year_end=int(sys.argv[2]) # get last year argument from bash
 
 def mergeTasPatterns(year_begin,year_end):
     
