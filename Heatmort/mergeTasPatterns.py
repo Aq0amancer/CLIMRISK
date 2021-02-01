@@ -28,7 +28,7 @@ def mergeTasPatterns(year_begin,year_end):
                         for version in versions:
                             # Load data
                             try:
-                                tas=year_load(CORDEX_path,mohc_dates,most_dates,years,'remapped_tas_patterns',gcm,rcp,rp,rcm,version,str(year)).expand_dims({'obs':1}) # Expand the dimension for observations
+                                tas=year_load_patterns(CORDEX_path,mohc_dates,most_dates,years,'tas',gcm,rcp,rp,rcm,version,str(year)).expand_dims({'obs':1}) # Expand the dimension for observations
                                 # Concatenate
                                 if any(tas_all_year):
                                     tas_all_year=xr.concat([tas_all_year, tas], dim="obs")
@@ -38,17 +38,16 @@ def mergeTasPatterns(year_begin,year_end):
                             #print('K-fold loop: ' + str(e))
                                 pass
 
-    monthly_mask=xr.open_dataset("merged_monthly.nc")
-    tas=year_load(CORDEX_path,mohc_dates,most_dates,years,'tas','ICHEC-EC-EARTH','rcp85','r12i1p1','SMHI-RCA4','v1','2006').expand_dims({'obs':1})
+    tas=year_load_patterns(CORDEX_path,mohc_dates,most_dates,years,'tas','ICHEC-EC-EARTH','rcp85','r12i1p1','SMHI-RCA4','v1','2006')
     ds = xr.Dataset(
         data_vars=dict(
-            tas_patterns=(["time", "lat", "lon","obs"], tas_all_year['tas'][:,time,lat,lon]),
-            time_bnds=(["time", "bnds"], monthly_mask['time_bnds'][(year_begin-2006)*12:(year_end+1-2006)*12])
+            tas_patterns=(["obs","time", "lat", "lon"], tas_all_year['tas']),
+            time_bnds=(["time", "bnds"], tas['time_bnds'])
         ),
         coords=dict(
             lon=(['lon'], tas['lon']),
             lat=(["lat"], tas['lat']),
-            time=monthly_mask['time'][(year_begin-2006)*12:(year_end+1-2006)*12],
+            time=tas['time'],
         ),
         attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
 
