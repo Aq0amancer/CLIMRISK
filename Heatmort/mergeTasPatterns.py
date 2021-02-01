@@ -35,4 +35,4 @@ for year in range(year_begin,year_end+1):
                         #print('K-fold loop: ' + str(e))
                             pass
 
-tas_all_year.to_dataframe.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_test_output.nc")
+tas_all_year.to_dataframe.to_netcdf(CORDEX_path+"remapped_tas_patterns.nc")
