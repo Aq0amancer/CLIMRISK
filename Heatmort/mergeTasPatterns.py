@@ -52,4 +52,4 @@ def mergeTasPatterns(year_begin,year_end):
         # Save to NCDF4
         ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
 
-mergeTasPatterns(year_begin,year_end,reg_type)
+mergeTasPatterns(year_begin,year_end)
