@@ -97,6 +97,11 @@ def year_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,versi
 
     return data
 
-#def patterns2tas(percentile,annual_tas):
+def patterns2tas(first_year,last_year,annual_tas,percentile):
+    # Open the patterns dataset
+    patterns_path='C:/Users/predr/Desktop/'+ first_year +'-'+ last_year + '_tas_patterns.nc'
+    patterns_dataset = xr.open_dataset(patterns_path)
+    patterns_array = np.percentile(patterns_dataset['tas_patterns'], percentile,axis=0) # return a percentile
+    
 
 

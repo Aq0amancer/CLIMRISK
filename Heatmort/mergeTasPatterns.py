@@ -38,16 +38,15 @@ def mergeTasPatterns(year_begin,year_end):
                             #print('K-fold loop: ' + str(e))
                                 pass
 
-    tas=year_load_patterns(CORDEX_path,mohc_dates,most_dates,years,'tas','ICHEC-EC-EARTH','rcp85','r12i1p1','SMHI-RCA4','v1','2006')
     ds = xr.Dataset(
         data_vars=dict(
             tas_patterns=(["obs","time", "lat", "lon"], tas_all_year['tas']),
-            time_bnds=(["time", "bnds"], tas['time_bnds'])
+            time_bnds=(["time", "bnds"], tas_all_year['time_bnds'])
         ),
         coords=dict(
-            lon=(['lon'], tas['lon']),
-            lat=(["lat"], tas['lat']),
-            time=tas['time'],
+            lon=(['lon'], tas_all_year['lon']),
+            lat=(["lat"], tas_all_year['lat']),
+            time=tas_all_year['time'],
         ),
         attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
 
