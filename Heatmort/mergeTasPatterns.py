@@ -38,19 +38,7 @@ def mergeTasPatterns(year_begin,year_end):
                             #print('K-fold loop: ' + str(e))
                                 pass
 
-    ds = xr.Dataset(
-        data_vars=dict(
-            tas_patterns=(["obs","time", "lat", "lon"], tas_all_year['tas']),
-            time_bnds=(["time", "bnds"], tas_all_year['time_bnds'])
-        ),
-        coords=dict(
-            lon=(['lon'], tas_all_year['lon']),
-            lat=(["lat"], tas_all_year['lat']),
-            time=tas_all_year['time'],
-        ),
-        attrs=dict(description="Temperature patterns for" + str(year_begin)+ '-' + str(year_end)))
-
     # Save to NCDF4
-    ds.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
+    tas_all_year.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
 
 mergeTasPatterns(year_begin,year_end)
