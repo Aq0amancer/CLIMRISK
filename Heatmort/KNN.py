@@ -39,7 +39,7 @@ knn = neighbors.KNeighborsRegressor(n_neighbors, weights=weights)
 def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
     start = time.time()
     # Load CLIMRISK annual temperature data
-    climrisk_tas = scipy.io.loadmat('../CLIMRISK temperatures/CLIMRISK_'+rcp_scenario+'_'+ssp_scenario+'_IIASA_50pctl_50climsens.mat')['TEMPERATURES_FINAL'] # Load CLIMRISK annual temperatures 
+    climrisk_tas = scipy.io.loadmat(climrisktemp_path+'CLIMRISK_'+rcp_scenario+'_'+ssp_scenario+'_IIASA_50pctl_50climsens.mat')['TEMPERATURES_FINAL'] # Load CLIMRISK annual temperatures 
     tas_all_year=[]
     hurs_all_year=[]
     for gcm in gcms:
