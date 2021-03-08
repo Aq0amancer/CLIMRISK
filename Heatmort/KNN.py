@@ -65,8 +65,8 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
                             pass
     #print(tas_all_year.sizes)
     # Loat patterns
-    patterns_path=patterns_path + date + '_tas_patterns.nc'
-    patterns_dataset = xr.open_dataset(patterns_path)
+    patterns_full_path=patterns_path + date + '_tas_patterns.nc'
+    patterns_dataset = xr.open_dataset(patterns_full_path)
     count=0
     for lat in range(90): #90
         for lon in range(134): #134
@@ -103,6 +103,14 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
             time=monthly_mask['time'],
         ),
         attrs=dict(description="Daily estimates for TAS and HURS originating from CLIMRISK. Method used = KNN with " +str(n_neighbors) + ' nearest neighbours.'))
+        ds['daily_climrisk_hurs'].attrs['standard_name'] = 'humidity'
+        ds['daily_climrisk_hurs'].attrs['long_name'] = 'Near-Surface Relative Humidity'
+        ds['daily_climrisk_hurs'].attrs['units'] = '%'
+        ds['daily_climrisk_hurs'].attrs['cell_methods']='time: mean'
+        ds['daily_climrisk_tas'].attrs['standard_name'] = 'temperature'
+        ds['daily_climrisk_tas'].attrs['long_name'] = 'Near-Surface Air Temperature'
+        ds['daily_climrisk_tas'].attrs['units'] = 'degrees C'
+        ds['daily_climrisk_tas'].attrs['cell_methods']='time: mean'
 
     # Save to NCDF4
     ds.to_netcdf(date + "_test_output.nc")
