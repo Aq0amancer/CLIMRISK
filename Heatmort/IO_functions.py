@@ -90,18 +90,21 @@ def year_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,versi
     try:
         data = xr.open_dataset(data_path)
         data=data.sel(time=year)
-        #print("Successful load: "+ data_path)
+        print("Successful load: "+ data_path)
     except Exception as e: 
         #print(e)
         data=[]
 
     return data
 
-def patterns2tas(first_year,last_year,annual_tas,percentile):
+def patterns2tas(patterns_dataset,date,annual_tas,percentile,lat,lon):
     # Open the patterns dataset
-    patterns_path='C:/Users/predr/Desktop/'+ first_year +'-'+ last_year + '_tas_patterns.nc'
-    patterns_dataset = xr.open_dataset(patterns_path)
-    patterns_array = np.percentile(patterns_dataset['tas_patterns'], percentile,axis=0) # return a percentile
-    
+    #patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
+    year=int(date[0:4]) #get first year from the date string
+    daily_tas=[]
+    for index,year_value in enumerate(range(year,year+5)):
+        patterns_array = np.percentile(patterns_dataset['tas'].sel(time=str(year_value)), percentile,axis=0) # return a percentile
+        daily_tas.extend(np.squeeze(annual_tas[lat,lon,year_value-2010]) * np.squeeze(patterns_array[:,lat,lon]))  # For each year, multiply patterns_array (365,90,134) with the CLIMRISK annual temperatures (90,134,1)
+    return daily_tas
 
 
