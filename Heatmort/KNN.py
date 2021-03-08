@@ -65,7 +65,7 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
                             pass
     #print(tas_all_year.sizes)
     # Loat patterns
-    patterns_path=date + '_tas_patterns.nc'
+    patterns_path=patterns_path + date + '_tas_patterns.nc'
     patterns_dataset = xr.open_dataset(patterns_path)
     count=0
     for lat in range(90): #90
