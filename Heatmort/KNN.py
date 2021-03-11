@@ -21,7 +21,7 @@ import time
 import sys
 
 # General parameters
-tas_percentile=75 # Climate sensitivity parameter
+tas_percentile=50 # Climate sensitivity parameter
 daily_climrisk_hurs=np.zeros((1826,90,134))
 daily_climrisk_tas=np.zeros((1826,90,134))
 
@@ -68,9 +68,9 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
     patterns_full_path=patterns_path + date + '_tas_patterns.nc'
     patterns_dataset = xr.open_dataset(patterns_full_path)
     count=0
+    daily_climrisk_tas[:,lat,lon]=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile)
     for lat in range(90): #90
         for lon in range(134): #134
-            daily_climrisk_tas[:,lat,lon]=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile,lat,lon)
             for day in range(1826): # for every day, do KNN regression
                 tas_cell_day_train=np.squeeze(tas_all_year['tas'][:,day,lat,lon])
                 hurs_cell_day_train=np.squeeze(hurs_all_year['hurs'][:,day,lat,lon])

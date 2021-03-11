@@ -97,14 +97,27 @@ def year_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,versi
 
     return data
 
-def patterns2tas(patterns_dataset,date,annual_tas,percentile,lat,lon):
+def patterns2tas(patterns_dataset,date,annual_tas,percentile):
     # Open the patterns dataset
     #patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
     year=int(date[0:4]) #get first year from the date string
     daily_tas=[]
-    for index,year_value in enumerate(range(year,year+5)):
+    annual_tas = np.transpose(annual_tas, (2, 0, 1))
+    for year_value in range(year,year+5):
         patterns_array = np.percentile(patterns_dataset['tas'].sel(time=str(year_value)), percentile,axis=0) # return a percentile
-        daily_tas.extend(np.squeeze(annual_tas[lat,lon,year_value-2010]) * np.squeeze(patterns_array[:,lat,lon]))  # For each year, multiply patterns_array (365,90,134) with the CLIMRISK annual temperatures (90,134,1)
+        daily_tas.extend(np.multiply(annual_tas[year_value-2010,:,:],patterns_array[:,:,:]))  # For each year, multiply patterns_array (365,90,134) with the CLIMRISK annual temperatures (90,134,1)
     return daily_tas
 
+#def patterns2tasEff(patterns_dataset,date,annual_tas,percentile):
+    # Open the patterns dataset
+    #patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
+#    year=int(date[0:4]) #get first year from the date string
+#    patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
+##    annual_tas = np.transpose(annual_tas, (2, 0, 1))
+#   annual_tas_adjusted=np.empty((1826,90,134))
+#    for year_value in range(year,year+5): #adjust matrix to be (1826,90,134)
+#        annual_tas_adjusted[365*index:365*(index+1),:,:]=annual_tas[year_value-2010,:,:]
+    #maybe arrange patterns
+#    daily_tas=np.multiply(annual_tas_adjusted,patterns_array)  # For each year, multiply patterns_array (365,90,134) with the CLIMRISK annual temperatures (90,134,1)
+#    return daily_tas
 
