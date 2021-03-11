@@ -68,7 +68,7 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
     patterns_full_path=patterns_path + date + '_tas_patterns.nc'
     patterns_dataset = xr.open_dataset(patterns_full_path)
     count=0
-    daily_climrisk_tas[:,lat,lon]=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile)
+    daily_climrisk_tas=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile)
     for lat in range(90): #90
         for lon in range(134): #134
             for day in range(1826): # for every day, do KNN regression
@@ -78,7 +78,7 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
                 hurs_cell_day_train=np.vstack(np.array(hurs_cell_day_train,dtype=np.float64))
                 #print(daily_climrisk_tas)
                 try: # Try KNN
-                    daily_climrisk_hurs[day,lat,lon] = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(daily_climrisk_tas[day,lat,lon])
+                    daily_climrisk_hurs[day,lat,lon] = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(daily_climrisk_tas)
                     #print(daily_climrisk_hurs.shape)
                 except Exception as e:
                     #print('K-fold loop: ' + str(e))
