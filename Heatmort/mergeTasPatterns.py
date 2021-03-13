@@ -14,31 +14,27 @@ import time
 import sys
 
 # Bash parameters
-year_begin=int(sys.argv[1]) # get first year argument from bash
-year_end=int(sys.argv[2]) # get last year argument from bash
+date=int(sys.argv[1]) # get first year argument from bash
 
-def mergeTasPatterns(year_begin,year_end):
+def mergeTasPatterns(date):
     
-    for year in range(year_begin,year_end+1):
-        tas_all_year=[]
-        for gcm in gcms:
-            for rcp in rcps:
-                for rp in rps:
-                    for rcm in rcms:
-                        for version in versions:
-                            # Load data
-                            try:
-                                tas=year_load_patterns(CORDEX_path,mohc_dates,most_dates,years,'tas',gcm,rcp,rp,rcm,version,str(year)).expand_dims({'obs':1}) # Expand the dimension for observations
-                                # Concatenate
-                                if any(tas_all_year):
-                                    tas_all_year=xr.concat([tas_all_year, tas], dim="obs")
-                                else:
-                                    tas_all_year=tas
-                            except Exception as e:
+    for gcm in gcms:
+        for rcp in rcps:
+            for rp in rps:
+                for rcm in rcms:
+                    for version in versions:
+                        # Load data
+                        try:
+                            tas=year_load_patterns(CORDEX_path,'tas',gcm,rcp,rp,rcm,version,date).expand_dims({'obs':1}) # Expand the dimension for observations
+                            # Concatenate
+                            if any(tas_all_year):
+                                tas_all_year=xr.concat([tas_all_year, tas], dim="obs")
+                            else:
+                                tas_all_year=tas
+                        except Exception as e:
                             #print('K-fold loop: ' + str(e))
-                                pass
-
+                            pass
     # Save to NCDF4
-    tas_all_year.to_netcdf(str(year_begin)+ '-' + str(year_end) + "_tas_patterns.nc")
+    tas_all_year.to_netcdf(date + "_tas_patterns.nc")
 
-mergeTasPatterns(year_begin,year_end)
+mergeTasPatterns(date)
