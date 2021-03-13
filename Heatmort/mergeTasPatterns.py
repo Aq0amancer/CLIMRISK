@@ -17,7 +17,7 @@ import sys
 date=int(sys.argv[1]) # get first year argument from bash
 
 def mergeTasPatterns(date):
-    
+    count=0
     for gcm in gcms:
         for rcp in rcps:
             for rp in rps:
@@ -27,10 +27,11 @@ def mergeTasPatterns(date):
                         try:
                             tas=year_load_patterns(CORDEX_path,'tas',gcm,rcp,rp,rcm,version,date).expand_dims({'obs':1}) # Expand the dimension for observations
                             # Concatenate
-                            if any(tas_all_year):
+                            if count>0:
                                 tas_all_year=xr.concat([tas_all_year, tas], dim="obs")
                             else:
                                 tas_all_year=tas
+                                count+=1
                         except Exception as e:
                             #print('K-fold loop: ' + str(e))
                             pass
