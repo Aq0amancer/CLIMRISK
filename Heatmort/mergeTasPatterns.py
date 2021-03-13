@@ -14,7 +14,7 @@ import time
 import sys
 
 # Bash parameters
-date=int(sys.argv[1]) # get first year argument from bash
+date=sys.argv[1] # get first year argument from bash
 
 def mergeTasPatterns(date):
     count=0
