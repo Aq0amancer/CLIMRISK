@@ -102,3 +102,12 @@ def multicol(data):
     corr = np.corrcoef(data, rowvar=0) 
     value, vector = np.linalg.eig(corr)
     return value, vector
+
+def magnus(temperature,relative_humidity):
+    # A formula to calculate the humidity using relative humidity (in %) and surface air temperature (in C)
+    try:
+        H=np.log(relative_humidity/100) + (17.62*temperature)/(243.12+temperature)
+        dew=243.12*H/(17.62-H)
+    except:
+        dew=np.nan
+    return dew

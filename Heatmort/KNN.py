@@ -22,24 +22,24 @@ import sys
 
 # General parameters
 tas_percentile=50 # Climate sensitivity parameter
-daily_climrisk_hurs=np.zeros((1826,90,134))
-daily_climrisk_tas=np.zeros((1826,90,134))
 
 # Bash parameters
 date=sys.argv[1] # get first year argument from bash
 rcp_scenario=sys.argv[2] # get regression type from bash
 ssp_scenario=sys.argv[3] # get regression type from bash
 tas_percentil=sys.argv[4]
+uhi=sys.argv[5]
+
 # KNN setup
 n_neighbors=2 # number of nearest-neighbours
 weights= 'distance' # can also be 'uniform'
 knn = neighbors.KNeighborsRegressor(n_neighbors, weights=weights)
 
 
-def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
+def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     start = time.time()
     # Load CLIMRISK annual temperature data
-    climrisk_tas = scipy.io.loadmat(climrisktemp_path+'CLIMRISK_'+rcp_scenario+'_'+ssp_scenario+'_IIASA_50pctl_50climsens.mat')['TEMPERATURES_FINAL'] # Load CLIMRISK annual temperatures 
+    climrisk_tas = scipy.io.loadmat(climrisktemp_path+'CLIMRISK_'+rcp_scenario+'_'+ssp_scenario+'_IIASA_50pctl_50climsens_' + uhi + '.mat')['TEMPERATURES_FINAL'] # Load CLIMRISK annual temperatures 
     tas_all_year=[]
     hurs_all_year=[]
     for gcm in gcms:
@@ -68,14 +68,18 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
     patterns_full_path=patterns_path + date + '_tas_patterns.nc'
     patterns_dataset = xr.open_dataset(patterns_full_path)
     count=0
-    daily_climrisk_tas=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile)
-    #print(daily_climrisk_tas)
+    # Dimensions
     lat_range=90
     lon_range=134
-    
+    time_range=len(tas_all_year['time'])
+    # Initialize
+    daily_climrisk_hurs=np.zeros((time_range,90,134))
+    daily_climrisk_tas=np.zeros((time_range,90,134))
+    daily_climrisk_tas=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile)
+    #print(daily_climrisk_tas)
     for lat in range(lat_range): #90
         for lon in range(lon_range): #134
-            for day in range(1826): # for every day, do KNN regression
+            for day in range(time_range): # for every day, do KNN regression
                 tas_cell_day_train=np.asarray(tas_all_year['tas'][:,day,lat,lon].dropna("obs")).reshape(-1,1)
                 hurs_cell_day_train=np.asarray(hurs_all_year['hurs'][:,day,lat,lon].dropna("obs")).reshape(-1,1)
                 tas_cell_day_train=np.vstack(np.array(tas_cell_day_train,dtype=np.float64))
@@ -103,7 +107,12 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
             lat=(["lat"], monthly_mask['lat']),
             time=monthly_mask['time'],
         ),
-        attrs=dict(description="Daily estimates for TAS and HURS originating from CLIMRISK. Method used = KNN with " +str(n_neighbors) + ' nearest neighbours.'))
+        attrs={'description': "Daily estimates of surface air temperature and relative humidity based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates. Method used = KNN with " +str(n_neighbors) + " nearest neighbours.",
+            'Climate scenario':rcp_scenario,
+            'Socioeconomic scenario(for UHI)': ssp_scenario,
+            'Temperature realization percentile':(str(tas_percentil)+'th'),
+            'Urban Heat Island(UHI)':uhi})
+
         # Hurs
         ds['daily_climrisk_hurs'].attrs['standard_name'] = 'humidity'
         ds['daily_climrisk_hurs'].attrs['long_name'] = 'Near-Surface Relative Humidity'
@@ -117,7 +126,7 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
         ds['daily_climrisk_tas'].attrs['cell_methods']='time: mean'
 
     # Save to NCDF4
-    ds.to_netcdf(date + "_test_output.nc")
+    ds.to_netcdf(rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
 
 
-KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil)
+KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil,uhi)

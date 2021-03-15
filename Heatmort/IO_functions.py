@@ -35,6 +35,14 @@ def load(relative_path,var,gcm,rcp,rp,rcm,version,date):
 
     return data
 
+def loadClimate(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
+    # Load temperature and relative humidity data from CLIMRISK + CORDEX
+    data_path = relative_path + "/" + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc'
+    data = xr.open_dataset(data_path)
+    print("Successful load: "+ data_path)
+    return data
+
+
 def month_load(relative_path,mohc_dates,most_dates,years,var,gcm,rcp,rp,rcm,version,year,month):
     
     """
@@ -97,7 +105,7 @@ def patterns2tas(patterns_dataset,date,annual_tas,percentile):
     #patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
     year=int(date[0:4]) #get first year from the date string
     annual_tas = np.transpose(annual_tas, (2, 0, 1))
-    annual_tas=annual_tas+272.15
+    annual_tas=annual_tas+273.15
     for year_value in range(year,year+5):
         patterns_array=patterns_dataset['tas'].sel(time=str(year_value)).dropna('obs')
         patterns_array_year = np.percentile(patterns_array, percentile,axis=0) # return a percentile
