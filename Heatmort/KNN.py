@@ -70,19 +70,18 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
     count=0
     daily_climrisk_tas=patterns2tas(patterns_dataset,date,climrisk_tas,tas_percentile)
     #print(daily_climrisk_tas)
-    lat_range=45
-    lon_range=77
+    lat_range=90
+    lon_range=134
     for lat in range(lat_range): #90
         for lon in range(lon_range): #134
             for day in range(1826): # for every day, do KNN regression
                 tas_cell_day_train=np.asarray(tas_all_year['tas'][:,day,lat,lon].dropna("obs")).reshape(-1,1)
                 hurs_cell_day_train=np.asarray(hurs_all_year['hurs'][:,day,lat,lon].dropna("obs")).reshape(-1,1)
-                #tas_cell_day_train=np.vstack(np.array(tas_cell_day_train,dtype=np.float64))
-                #hurs_cell_day_train=np.vstack(np.array(hurs_cell_day_train,dtype=np.float64))
-                #print(np.asarray(daily_climrisk_tas[day,lat,lon]).reshape(-1,1))
+                tas_cell_day_train=np.vstack(np.array(tas_cell_day_train,dtype=np.float64))
+                print(tas_cell_day_train)
+                hurs_cell_day_train=np.vstack(np.array(hurs_cell_day_train,dtype=np.float64))
                 try: # Try KNN
                     daily_climrisk_hurs[day,lat,lon] = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(np.asarray(daily_climrisk_tas[day,lat,lon]).reshape(-1,1))
-                    #print(daily_climrisk_hurs.shape)
                 except Exception as e:
                     #print('K-fold loop: ' + str(e))
                     pass
@@ -106,10 +105,13 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
             time=monthly_mask['time'],
         ),
         attrs=dict(description="Daily estimates for TAS and HURS originating from CLIMRISK. Method used = KNN with " +str(n_neighbors) + ' nearest neighbours.'))
+        # Hurs
         ds['daily_climrisk_hurs'].attrs['standard_name'] = 'humidity'
         ds['daily_climrisk_hurs'].attrs['long_name'] = 'Near-Surface Relative Humidity'
         ds['daily_climrisk_hurs'].attrs['units'] = '%'
         ds['daily_climrisk_hurs'].attrs['cell_methods']='time: mean'
+        # Tas
+        ds['daily_climrisk_tas'] = ds['daily_climrisk_tas']-272.15
         ds['daily_climrisk_tas'].attrs['standard_name'] = 'temperature'
         ds['daily_climrisk_tas'].attrs['long_name'] = 'Near-Surface Air Temperature'
         ds['daily_climrisk_tas'].attrs['units'] = 'degrees C'

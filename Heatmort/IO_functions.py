@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 from pathCORDEX import * # Import path to CORDEX data
-
+from numpy import array
 def saveReg(relative_path,coefs,adjr2,rmse):
     np.savetxt(relative_path + "corrMatrix_EUR-11_"+ gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".csv", corrMatrix, delimiter=",")
     print('Successful save: corrMatrix-' + gcm + '-' + rcp + '-' + rp + '-' + version + '-' + date) # Print info
@@ -28,13 +28,6 @@ def load(relative_path,var,gcm,rcp,rp,rcm,version,date):
     data_path = relative_path + "/" + gcm + "/" + var + "/" + rcp + "/remapped_" + var + "_EUR-11_" + gcm + "_"+ rcp+ "_"+ rp+ "_"+rcm+"_"+ version+ "_day_"+ date + ".nc"
     try:
         data = xr.open_dataset(data_path)
-        if var=='tas':
-            data['tas'] = data['tas']-272.15
-            data['tas'].attrs['grid_mapping'] = 'rotated_pole'
-            data['tas'].attrs['standard_name'] = 'air_temperature'
-            data['tas'].attrs['long_name'] = 'Near-Surface Air Temperature'
-            data['tas'].attrs['units'] = 'degrees C'
-            data['tas'].attrs['cell_methods']='time: mean'
         print("Successful load: "+ data_path)
     except Exception as e: 
         #print(e)
@@ -104,10 +97,11 @@ def patterns2tas(patterns_dataset,date,annual_tas,percentile):
     #patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
     year=int(date[0:4]) #get first year from the date string
     annual_tas = np.transpose(annual_tas, (2, 0, 1))
+    annual_tas=annual_tas+272.15
     for year_value in range(year,year+5):
-        patterns_dataset_year=patterns_dataset['tas'].sel(time=str(year_value)).dropna('obs')
-        patterns_array = np.percentile(patterns_dataset_year, percentile,axis=0) # return a percentile
-        daily_tas_year=np.multiply(annual_tas[year_value-2010,:,:],patterns_array[:,:,:])
+        patterns_array=patterns_dataset['tas'].sel(time=str(year_value)).dropna('obs')
+        patterns_array_year = np.percentile(patterns_array, percentile,axis=0) # return a percentile
+        daily_tas_year=annual_tas[year_value-2010,:,:] * patterns_array_year
         if year_value==year:
             daily_tas_all=daily_tas_year
         else:
