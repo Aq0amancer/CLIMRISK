@@ -72,13 +72,13 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
     #print(daily_climrisk_tas)
     lat_range=90
     lon_range=134
+    
     for lat in range(lat_range): #90
         for lon in range(lon_range): #134
             for day in range(1826): # for every day, do KNN regression
                 tas_cell_day_train=np.asarray(tas_all_year['tas'][:,day,lat,lon].dropna("obs")).reshape(-1,1)
                 hurs_cell_day_train=np.asarray(hurs_all_year['hurs'][:,day,lat,lon].dropna("obs")).reshape(-1,1)
                 tas_cell_day_train=np.vstack(np.array(tas_cell_day_train,dtype=np.float64))
-                print(tas_cell_day_train)
                 hurs_cell_day_train=np.vstack(np.array(hurs_cell_day_train,dtype=np.float64))
                 try: # Try KNN
                     daily_climrisk_hurs[day,lat,lon] = knn.fit(tas_cell_day_train, hurs_cell_day_train).predict(np.asarray(daily_climrisk_tas[day,lat,lon]).reshape(-1,1))
@@ -89,9 +89,8 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil):
             print(str(round(count*100/(lat_range*lon_range),2)) + '% complete')
     end = time.time()
     print(date + ' finished in ' + str(end - start) + ' seconds')
-
-# Load monthly time mask
-    with xr.open_dataset("template.nc") as monthly_mask:
+    # Load monthly time mask
+    with xr.open_dataset(date+'_template.nc') as monthly_mask:
     #Convert adjr2 and rmse data to xarray.Dataset format
         ds = xr.Dataset(
         data_vars=dict(
