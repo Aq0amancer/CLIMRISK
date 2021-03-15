@@ -17,7 +17,6 @@ from IO_functions import *
 from parameters import *
 import scipy.io
 #import statsmodels.api as sm
-from sklearn import neighbors
 #from statsFunc import crossValidateKfold
 from pathCORDEX import *
 from statsFunc import magnus
@@ -34,15 +33,13 @@ uhi=sys.argv[5]
 def heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     # Load data
     climate_data=loadClimate(climate_data_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
-    lat_range=90
-    lon_range=134
-    time_range=len(climate_data['time'])
-    dew=np.zeros((time_range,lat_range,lon_range))
     # Magnus formula for dew points
-    for lat in range(lat_range): #90
-        for lon in range(lon_range): #134
-            for day in range(1): # for every day, do KNN regression
-                dew[day,lat,lon]=magnus(climate_data['daily_climrisk_tas'][day,lat,lon],climate_data['daily_climrisk_hurs'][day,lat,lon])
-
+    dew=magnus(climate_data['daily_climrisk_tas'],climate_data['daily_climrisk_hurs'])
+    climate_data=climate_data.assign(dew_point=dew)
+    # Apparent temperatures
+    AT= -2.653 + 0.994*climate_data['daily_climrisk_tas'] + 0.0153*np.square(climate_data['dew_point'])
+    climate_data=climate_data.assign(apparent_tas=AT)
+    # Save dew point to current .NC file
+    climate_data.to_netcdf(rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
 # Run function
 heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi)

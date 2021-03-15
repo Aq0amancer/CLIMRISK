@@ -4,6 +4,7 @@ import statsmodels.api as sm
 import numpy as np
 from sklearn.model_selection import StratifiedKFold, KFold
 import pandas as pd
+from numpy import errstate,isneginf,array
 
 def meanNormRMSE(predictions, targets):
     return (np.sqrt((targets-predictions) **2).mean())/targets.mean()
@@ -105,9 +106,7 @@ def multicol(data):
 
 def magnus(temperature,relative_humidity):
     # A formula to calculate the humidity using relative humidity (in %) and surface air temperature (in C)
-    try:
+    with errstate(divide='ignore'):
         H=np.log(relative_humidity/100) + (17.62*temperature)/(243.12+temperature)
         dew=243.12*H/(17.62-H)
-    except:
-        dew=np.nan
     return dew
