@@ -40,6 +40,6 @@ def heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     AT= -2.653 + 0.994*climate_data['daily_climrisk_tas'] + 0.0153*np.square(climate_data['dew_point'])
     climate_data=climate_data.assign(apparent_tas=AT)
     # Save dew point to current .NC file
-    climate_data.to_netcdf(rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
+    climate_data.to_netcdf('AT_'+ rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
 # Run function
 heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
