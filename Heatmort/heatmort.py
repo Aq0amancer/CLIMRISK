@@ -30,7 +30,7 @@ ssp_scenario=sys.argv[3] # get regression type from bash
 tas_percentil=sys.argv[4]
 uhi=sys.argv[5]
 
-def heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
+def AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     # Load data
     climate_data=loadClimate(climate_data_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
     # Magnus formula for dew points
@@ -41,5 +41,19 @@ def heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     climate_data=climate_data.assign(apparent_tas=AT)
     # Save dew point to current .NC file
     climate_data.to_netcdf('AT_'+ rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
+
+def heatMort(apparent_temperatures):
+    '''
+    This function takes apparent temperature (AT) estimates and generates the fraction of deaths attributable to heat (AF)
+    '''
+    baccini_countries = scipy.io.loadmat(climrisk_masks_path+'baccini_matrix.mat')['baccini_matrix']
+    h_north=21.1 # Temperature threshold Northern
+    h_med=25.7 # Temperature threshold Medditeranean
+    h_east=19.3 # Temperature threshold Eastern
+    apparent_temperatures>baccini_matrix
+
+
+
+
 # Run function
-heatMort(date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
+AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi) 
