@@ -40,7 +40,7 @@ def AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     AT= -2.653 + 0.994*climate_data['daily_climrisk_tas'] + 0.0153*np.square(climate_data['dew_point'])
     climate_data=climate_data.assign(apparent_tas=AT)
     # Save dew point to current .NC file
-    AT_dict={"AT": AT}
+    AT_dict={"AT": AT} #G
     scipy.io.savemat(path+'/AT_' + rcp_scenario +
                     '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.mat', AT_dict)
     climate_data.to_netcdf('AT_'+ rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
