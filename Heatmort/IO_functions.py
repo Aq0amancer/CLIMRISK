@@ -37,7 +37,7 @@ def load(relative_path,var,gcm,rcp,rp,rcm,version,date):
 
 def loadClimate(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     # Load temperature and relative humidity data from CLIMRISK + CORDEX
-    data_path = relative_path + "/CLIMRISK" + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc'
+    data_path = relative_path + "/" + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc'
     data = xr.open_dataset(data_path)
     print("Successful load: "+ data_path)
     return data

@@ -32,7 +32,7 @@ uhi=sys.argv[5]
 
 def AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     # Load data
-    climate_data=loadClimate(path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
+    climate_data=loadClimate(path +'/CLIMRISK temperatures/',date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
     # Magnus formula for dew points
     dew=magnus(climate_data['daily_climrisk_tas'],climate_data['daily_climrisk_hurs'])
     climate_data=climate_data.assign(dew_point=dew)
@@ -40,6 +40,9 @@ def AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     AT= -2.653 + 0.994*climate_data['daily_climrisk_tas'] + 0.0153*np.square(climate_data['dew_point'])
     climate_data=climate_data.assign(apparent_tas=AT)
     # Save dew point to current .NC file
+    AT_dict={"AT": AT}
+    scipy.io.savemat(path+'/AT_' + rcp_scenario +
+                    '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.mat', AT_dict)
     climate_data.to_netcdf('AT_'+ rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
     return AT
 
@@ -54,9 +57,10 @@ def AF(date, rcp_scenario, ssp_scenario, tas_percentil, uhi):
     h=baccini_data['baccini_matrix']
     b=baccini_data['baccini_variance']
     #print(baccini_matrix.shape)
-    at_boolean=np.greater(AT,h) # is the temperature above
-    AF=1-(1/(np.exp(b*(AT-h)*at_boolean)))
-    #AF = b*(AT-h)
+    #at_boolean=np.greater(AT,h) # is the temperature above
+    #AF=1-(1/(np.exp(b*(AT-h)*at_boolean)))
+    AF=1-(1/(np.exp(b*(AT-h))))
+    AF=AF.clip(min=0)
     climate_data=climate_data.assign(attributable_fraction=AF)
     # Generate average AF
     year = int(date[0:4])  # get first year from the date string
@@ -67,8 +71,8 @@ def AF(date, rcp_scenario, ssp_scenario, tas_percentil, uhi):
     AF_dict={"AF": AF_year}
     scipy.io.savemat(path+'/AF_' + rcp_scenario +
                      '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.mat', AF_dict)
-    climate_data.to_netcdf(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AF_' + rcp_scenario +
-                           '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc')
+    #climate_data.to_netcdf(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AF_' + rcp_scenario +
+    #                       '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc')
     return AF
     
 def AD():
@@ -80,6 +84,7 @@ def AD():
     lambdah=0.45 # PHEWE proportion of annual deaths during the warm season
     pop=0
     AD=AF*pop*r*lambdah
+
 # Run function
 #apparent_temperatures=AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi) 
-AF(date, rcp_scenario, ssp_scenario, tas_percentil, uhi)
+AT(date, rcp_scenario, ssp_scenario, tas_percentil, uhi)
