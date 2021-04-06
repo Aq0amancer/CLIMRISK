@@ -16,7 +16,7 @@ import scipy.io
 #import statsmodels.api as sm
 from sklearn import neighbors
 #from statsFunc import crossValidateKfold
-from pathCORDEX import *
+from paths import *
 import time
 import sys
 
