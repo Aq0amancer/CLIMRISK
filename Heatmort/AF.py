@@ -24,28 +24,10 @@ import time
 import sys
 
 # Bash parameters
-date=sys.argv[1] # get first year argument from bash
-rcp_scenario=sys.argv[2] # get regression type from bash
-ssp_scenario=sys.argv[3] # get regression type from bash
-tas_percentil=sys.argv[4]
-uhi=sys.argv[5]
-
-def AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
-    # Load data
-    climate_data=loadClimate(path +'/CLIMRISK temperatures/',date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
-    # Magnus formula for dew points
-    dew=magnus(climate_data['daily_climrisk_tas'],climate_data['daily_climrisk_hurs'])
-    climate_data=climate_data.assign(dew_point=dew)
-    # Apparent temperatures
-    AT= -2.653 + 0.994*climate_data['daily_climrisk_tas'] + 0.0153*np.square(climate_data['dew_point'])
-    climate_data=climate_data.assign(apparent_tas=AT)
-    # Save dew point to current .NC file
-    AT_dict={"AT": AT} #G
-    scipy.io.savemat(path+'/AT_' + rcp_scenario +
-                    '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.mat', AT_dict)
-    climate_data.to_netcdf('AT_'+ rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
-    return AT
-
+rcp_scenario=sys.argv[1] # get regression type from bash
+ssp_scenario=sys.argv[2] # get regression type from bash
+tas_percentil=sys.argv[3]
+uhi=sys.argv[4]
 
 def AF(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     '''
@@ -83,18 +65,6 @@ def AF(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     #climate_data.to_netcdf(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AF_' + rcp_scenario +
     #                       '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc')
     return AF
-    
-def AD():
-    '''
-    Attributable deaths function.
-    Takes in population estimates from CLIMRISK, multiplies by the crude mortality rate (r), the fraction of deaths between April - September and the fraction of deaths due to heat (AF)
-    r - average annual crude country-level mortality rate for a period
-    '''
-    lambdah=0.45 # PHEWE proportion of annual deaths during the warm season
-    pop=0
-    AD=AF*pop*r*lambdah
 
 # Run function
-#apparent_temperatures=AT(date,rcp_scenario, ssp_scenario, tas_percentil,uhi) 
-#AF(rcp_scenario, ssp_scenario, tas_percentil, uhi)
-AT(rcp_scenario, ssp_scenario, tas_percentil, uhi)
+AF(rcp_scenario, ssp_scenario, tas_percentil, uhi)

@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\predr\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
+    "python.pythonPath": "C:\\Users\\predr\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
     "python.formatting.provider": "black"
 }
