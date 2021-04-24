@@ -126,25 +126,3 @@ def meanSummerTemperatures(relative_path,date,rcp_scenario, ssp_scenario, tas_pe
         else:
             mean_summer_temperatures_all_years=np.concatenate((mean_summer_temperatures_all_years,mean_summer_temperatures_year),axis=0)  
     return mean_summer_temperatures_all_years
-
-def saveNC(relative_path,data,date):
-    template_file=
-
-    with xr.open_dataset(template_file) as monthly_mask:
-    #Convert adjr2 and rmse data to xarray.Dataset format
-        ds = xr.Dataset(
-        data_vars=dict(
-            daily_climrisk_hurs=(["time", "lat", "lon"], daily_climrisk_hurs),
-            daily_climrisk_tas=(["time", "lat", "lon"], daily_climrisk_tas),
-            time_bnds=(["time", "bnds"], template_file['time_bnds'])
-        ),
-        coords=dict(
-            lon=(['lon'], template_file['lon']),
-            lat=(["lat"], template_file['lat']),
-            time=template_file['time'],
-        ),
-        attrs={'description': "Daily estimates of surface air temperature and relative humidity based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates. Method used = KNN with " +str(n_neighbors) + " nearest neighbours.",
-            'Climate scenario':rcp_scenario,
-            'Socioeconomic scenario(for UHI)': ssp_scenario,
-            'Temperature realization percentile':(str(tas_percentil)+'th'),
-            'Urban Heat Island(UHI)':uhi})
