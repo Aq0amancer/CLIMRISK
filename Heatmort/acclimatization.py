@@ -30,7 +30,7 @@ tas_percentil=sys.argv[3]
 uhi=sys.argv[4]
 
 def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
-    for date in dates: # First, concatenate mean monthly temperatures for all dates
+    for date in AF_dates: # First, concatenate mean monthly temperatures for all dates
         mean_summer_temperatures_date=meanSummerTemperatures(CORDEX_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
         template_file = date + '_template.nc'
         with xr.open_dataset(template_file) as monthly_mask:
