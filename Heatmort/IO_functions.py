@@ -37,7 +37,7 @@ def load(relative_path,var,gcm,rcp,rp,rcm,version,date):
 
 def loadClimate(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     # Load temperature and relative humidity data from CLIMRISK + CORDEX
-    data_path = relative_path + "/CLIMRISK temperatures/" + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc'
+    data_path = relative_path + "/CLIMRISK temperatures/" + rcp_scenario + '/'+ rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc'
     data = xr.open_dataset(data_path)
     print("Successful load: "+ data_path)
     return data
@@ -116,16 +116,35 @@ def patterns2tas(patterns_dataset,date,annual_tas,percentile):
             daily_tas_all=np.concatenate((daily_tas_all,daily_tas_year),axis=0)  # For each year, multiply patterns_array (365,90,134) with the CLIMRISK annual temperatures (90,134,1)
     return daily_tas_all
 
-#def patterns2tasEff(patterns_dataset,date,annual_tas,percentile):
-    # Open the patterns dataset
-    #patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
-#    year=int(date[0:4]) #get first year from the date string
-#    patterns_array = np.percentile(patterns_dataset['tas'], percentile,axis=0) # return a percentile
-##    annual_tas = np.transpose(annual_tas, (2, 0, 1))
-#   annual_tas_adjusted=np.empty((1826,90,134))
-#    for year_value in range(year,year+5): #adjust matrix to be (1826,90,134)
-#        annual_tas_adjusted[365*index:365*(index+1),:,:]=annual_tas[year_value-2010,:,:]
-    #maybe arrange patterns
-#    daily_tas=np.multiply(annual_tas_adjusted,patterns_array)  # For each year, multiply patterns_array (365,90,134) with the CLIMRISK annual temperatures (90,134,1)
-#    return daily_tas
+def meanSummerTemperatures(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
+    climate_data=loadClimate(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi) # Load data first
+    year=int(date[0:4]) #get first year from the date string
+    for year_value in range(year,year+5):
+        mean_summer_temperatures_year=np.mean(climate_data['daily_climrisk_tas'].sel(time=slice(str(year_value)+'-4', str(year_value)+'-9')), axis=0)
+        if year_value==year:
+            mean_summer_temperatures_all_years=mean_summer_temperatures_year
+        else:
+            mean_summer_temperatures_all_years=np.concatenate((mean_summer_temperatures_all_years,mean_summer_temperatures_year),axis=0)  
+    return mean_summer_temperatures_all_years
 
+def saveNC(relative_path,data,date):
+    template_file=
+
+    with xr.open_dataset(template_file) as monthly_mask:
+    #Convert adjr2 and rmse data to xarray.Dataset format
+        ds = xr.Dataset(
+        data_vars=dict(
+            daily_climrisk_hurs=(["time", "lat", "lon"], daily_climrisk_hurs),
+            daily_climrisk_tas=(["time", "lat", "lon"], daily_climrisk_tas),
+            time_bnds=(["time", "bnds"], template_file['time_bnds'])
+        ),
+        coords=dict(
+            lon=(['lon'], template_file['lon']),
+            lat=(["lat"], template_file['lat']),
+            time=template_file['time'],
+        ),
+        attrs={'description': "Daily estimates of surface air temperature and relative humidity based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates. Method used = KNN with " +str(n_neighbors) + " nearest neighbours.",
+            'Climate scenario':rcp_scenario,
+            'Socioeconomic scenario(for UHI)': ssp_scenario,
+            'Temperature realization percentile':(str(tas_percentil)+'th'),
+            'Urban Heat Island(UHI)':uhi})
