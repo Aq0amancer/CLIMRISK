@@ -45,7 +45,7 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
                 lat=(["lat"], monthly_mask['lat']),
                 time=monthly_mask['time'],
             ),
-            attrs={'description': "Monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates. Method used = KNN with " +str(n_neighbors) + " nearest neighbours.",
+            attrs={'description': "Monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates.",
                 'Climate scenario':rcp_scenario,
                 'Socioeconomic scenario(for UHI)': ssp_scenario,
                 'Temperature realization percentile':(str(tas_percentil)+'th'),
