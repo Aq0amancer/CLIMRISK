@@ -107,7 +107,7 @@ def patterns2tas(patterns_dataset,date,annual_tas,percentile):
     annual_tas = np.transpose(annual_tas, (2, 0, 1))
     annual_tas=annual_tas+273.15
     for year_value in range(year,year+5):
-        patterns_array=patterns_dataset['tas'].sel(time=str(year_value)).dropna('obs')
+        patterns_array=patterns_dataset['tas'].sel(time=str(year_value)).dropna('obs') 
         patterns_array_year = np.percentile(patterns_array, percentile,axis=0) # return a percentile
         daily_tas_year=annual_tas[year_value-2010,:,:] * patterns_array_year
         if year_value==year:
@@ -125,4 +125,5 @@ def meanSummerTemperatures(relative_path,date,rcp_scenario, ssp_scenario, tas_pe
             mean_summer_temperatures_all_years=mean_summer_temperatures_year
         else:
             mean_summer_temperatures_all_years=np.concatenate((mean_summer_temperatures_all_years,mean_summer_temperatures_year),axis=0)  
+        print(mean_summer_temperatures_all_years.shape)
     return mean_summer_temperatures_all_years
