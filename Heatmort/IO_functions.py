@@ -119,10 +119,9 @@ def patterns2tas(patterns_dataset,date,annual_tas,percentile):
 def meanSummerTemperatures(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
     climate_data=loadClimate(relative_path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi) # Load data first
     year=int(date[0:4]) #get first year from the date string
-    mean_summer_temperatures_all_years=np.empty((0,90,134))
-    for year_value in range(year,year+5):
+    mean_summer_temperatures_all_years=np.empty((90,134))
+    for year_value in range(year,year+1):
         mean_summer_temperatures_year=np.mean(climate_data['daily_climrisk_tas'].sel(time=slice(str(year_value)+'-4', str(year_value)+'-9')), axis=0)
-        mean_summer_temperatures_year=mean_summer_temperatures_year[np.newaxis,...]
-        mean_summer_temperatures_all_years=np.concatenate((mean_summer_temperatures_all_years,mean_summer_temperatures_year),axis=0)  
+        mean_summer_temperatures_all_years=np.stack((mean_summer_temperatures_all_years,mean_summer_temperatures_year))  
         print(mean_summer_temperatures_all_years.shape)
     return mean_summer_temperatures_all_years
