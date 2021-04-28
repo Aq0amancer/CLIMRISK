@@ -125,5 +125,5 @@ def meanSummerTemperatures(relative_path,date,rcp_scenario, ssp_scenario, tas_pe
             mean_summer_temperatures_all_years=mean_summer_temperatures_year
         else:
             mean_summer_temperatures_all_years=np.dstack((mean_summer_temperatures_all_years,mean_summer_temperatures_year))  
-        print(mean_summer_temperatures_all_years.shape)
+    mean_summer_temperatures_all_years = np.transpose(mean_summer_temperatures_all_years, (2, 0, 1))
     return mean_summer_temperatures_all_years
