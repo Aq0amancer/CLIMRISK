@@ -93,19 +93,20 @@ def KNNRegression(date,rcp_scenario, ssp_scenario, tas_percentil,uhi):
             print(str(round(count*100/(lat_range*lon_range),2)) + '% complete')
     end = time.time()
     print(date + ' finished in ' + str(end - start) + ' seconds')
-    # Load monthly time mask
-    with xr.open_dataset(date+'_template.nc') as monthly_mask:
+    # Load daily time mask
+    template_file = path + '/Masks/day_template/day_template_' + date + '.nc'
+    with xr.open_dataset(template_file) as daily_mask:
     #Convert adjr2 and rmse data to xarray.Dataset format
         ds = xr.Dataset(
         data_vars=dict(
             daily_climrisk_hurs=(["time", "lat", "lon"], daily_climrisk_hurs),
             daily_climrisk_tas=(["time", "lat", "lon"], daily_climrisk_tas),
-            time_bnds=(["time", "bnds"], monthly_mask['time_bnds'])
+            time_bnds=(["time", "bnds"], daily_mask['time_bnds'])
         ),
         coords=dict(
-            lon=(['lon'], monthly_mask['lon']),
-            lat=(["lat"], monthly_mask['lat']),
-            time=monthly_mask['time'],
+            lon=(['lon'], daily_mask['lon']),
+            lat=(["lat"], daily_mask['lat']),
+            time=daily_mask['time'],
         ),
         attrs={'description': "Daily estimates of surface air temperature and relative humidity based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates. Method used = KNN with " +str(n_neighbors) + " nearest neighbours.",
             'Climate scenario':rcp_scenario,
