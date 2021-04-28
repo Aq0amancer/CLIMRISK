@@ -32,18 +32,18 @@ uhi=sys.argv[4]
 def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     for date in AF_dates: # First, concatenate mean monthly temperatures for all dates
         mean_summer_temperatures_date=meanSummerTemperatures(path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
-        template_file = path + '/Masks/mon_template/mon_template_' + date + '.nc'
-        with xr.open_dataset(template_file) as monthly_mask:
+        template_file = path + '/Masks/year_template/year_template_' + date + '.nc'
+        with xr.open_dataset(template_file) as yearly_mask:
         #Convert adjr2 and rmse data to xarray.Dataset format
             ds = xr.Dataset(
             data_vars=dict(
                 mean_summer_temperature=(["time", "lat", "lon"], mean_summer_temperatures_date),
-                time_bnds=(["time", "bnds"], monthly_mask['time_bnds'])
+                time_bnds=(["time", "bnds"], yearly_mask['time_bnds'])
             ),
             coords=dict(
-                lon=(['lon'], monthly_mask['lon']),
-                lat=(["lat"], monthly_mask['lat']),
-                time=monthly_mask['time'],
+                lon=(['lon'], yearly_mask['lon']),
+                lat=(["lat"], yearly_mask['lat']),
+                time=yearly_mask['time'],
             ),
             attrs={'description': "Monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates.",
                 'Climate scenario':rcp_scenario,
