@@ -39,6 +39,7 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
                 mean_summer_temperatures_date_diff=np.zeros((90,134))
             else:
                 mean_summer_temperatures_date_diff=np.dstack((mean_summer_temperatures_date_diff,np.squeeze(mean_summer_temperatures_date[year_index,:,:]-mean_summer_temperatures_date[year_index-1,:,:])))
+    print(mean_summer_temperatures_date_diff.shape)
     template_file = path + '/Masks/year_template/year_template.nc'
     with xr.open_dataset(template_file) as yearly_mask:
     #Convert adjr2 and rmse data to xarray.Dataset format
