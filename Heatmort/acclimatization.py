@@ -32,26 +32,33 @@ uhi=sys.argv[4]
 def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     for date in AF_dates: # First, concatenate mean monthly temperatures for all dates
         mean_summer_temperatures_date=meanSummerTemperatures(path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
-        template_file = path + '/Masks/year_template/year_template_' + date + '.nc'
-        with xr.open_dataset(template_file) as yearly_mask:
-        #Convert adjr2 and rmse data to xarray.Dataset format
-            ds = xr.Dataset(
-            data_vars=dict(
-                mean_summer_temperature=(["time", "lat", "lon"], mean_summer_temperatures_date),
-                time_bnds=(["time", "bnds"], yearly_mask['time_bnds'])
-            ),
-            coords=dict(
-                lon=(['lon'], yearly_mask['lon']),
-                lat=(["lat"], yearly_mask['lat']),
-                time=yearly_mask['time'],
-            ),
-            attrs={'description': "Monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates.",
-                'Climate scenario':rcp_scenario,
-                'Socioeconomic scenario(for UHI)': ssp_scenario,
-                'Temperature realization percentile':(str(tas_percentil)+'th'),
-                'Urban Heat Island(UHI)':uhi})
+        # Calculate the difference in mean summer temperatures
+        year=int(date[0:4]) #get first year from the date string
+        for year_index in range(5):
+            if year_index==0:
+                mean_summer_temperatures_date_diff=np.zeros((134,90))
+            else:
+                mean_summer_temperatures_date_diff=np.dstack((mean_summer_temperatures_date_diff,mean_summer_temperatures_date[year_index,:,:]-mean_summer_temperatures_date[year_index-1,:,:]))
+    template_file = path + '/Masks/year_template/year_template.nc'
+    with xr.open_dataset(template_file) as yearly_mask:
+    #Convert adjr2 and rmse data to xarray.Dataset format
+        ds = xr.Dataset(
+        data_vars=dict(
+            mean_summer_temperature=(["time", "lat", "lon"], mean_summer_temperatures_date),
+            time_bnds=(["time", "bnds"], yearly_mask['time_bnds'])
+        ),
+        coords=dict(
+            lon=(['lon'], yearly_mask['lon']),
+            lat=(["lat"], yearly_mask['lat']),
+            time=yearly_mask['time'],
+        ),
+        attrs={'description': "Monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates.",
+            'Climate scenario':rcp_scenario,
+            'Socioeconomic scenario(for UHI)': ssp_scenario,
+            'Temperature realization percentile':(str(tas_percentil)+'th'),
+            'Urban Heat Island(UHI)':uhi})
 
-            # Save to NCDF4
-            ds.to_netcdf(path + '/CLIMRISK temperatures/Mean_monthly_tas_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_'+ uhi + '.nc')
+        # Save to NCDF4
+        ds.to_netcdf(path + '/CLIMRISK temperatures/Mean_monthly_tas_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + uhi + '.nc')
 
 acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi)
