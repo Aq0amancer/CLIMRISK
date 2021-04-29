@@ -44,7 +44,7 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     #Convert adjr2 and rmse data to xarray.Dataset format
         ds = xr.Dataset(
         data_vars=dict(
-            mean_summer_temperature=(["time", "lat", "lon"], mean_summer_temperatures_date),
+            mean_summer_temperature=(["time", "lat", "lon"], mean_summer_temperatures_date_diff),
             time_bnds=(["time", "bnds"], yearly_mask['time_bnds'])
         ),
         coords=dict(
@@ -52,7 +52,7 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
             lat=(["lat"], yearly_mask['lat']),
             time=yearly_mask['time'],
         ),
-        attrs={'description': "Monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates.",
+        attrs={'description': "Year-on-year differences in monthly mean estimates of surface air temperature based on CORDEX patterns and CLIMRISK annual 0.5*0.5 degree annual mean temperature estimates.",
             'Climate scenario':rcp_scenario,
             'Socioeconomic scenario(for UHI)': ssp_scenario,
             'Temperature realization percentile':(str(tas_percentil)+'th'),
