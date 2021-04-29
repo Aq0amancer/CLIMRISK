@@ -40,7 +40,7 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
             else:
                 mean_summer_temperatures_date_diff=np.dstack((mean_summer_temperatures_date_diff,np.squeeze(mean_summer_temperatures_date[year_index,:,:]-mean_summer_temperatures_date[year_index-1,:,:])))
     # Shuffle dimensions around to fit NC standard (time,lat,lon)
-    mean_summer_temperatures_date_diff=np.transpose(mean_summer_temperatures_date_diff, (1, 0, 2))
+    mean_summer_temperatures_date_diff=np.transpose(mean_summer_temperatures_date_diff, (0, 2, 1))
     print(mean_summer_temperatures_date_diff.shape)
     template_file = path + '/Masks/year_template/year_template.nc'
     with xr.open_dataset(template_file) as yearly_mask:
