@@ -36,7 +36,7 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
         year=int(date[0:4]) #get first year from the date string
         for year_index in range(5):
             if year_index==0:
-                mean_summer_temperatures_date_diff=np.zeros((134,90))
+                mean_summer_temperatures_date_diff=np.zeros((90,134))
             else:
                 mean_summer_temperatures_date_diff=np.dstack((mean_summer_temperatures_date_diff,np.squeeze(mean_summer_temperatures_date[year_index,:,:]-mean_summer_temperatures_date[year_index-1,:,:])))
     template_file = path + '/Masks/year_template/year_template.nc'
