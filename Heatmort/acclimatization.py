@@ -30,17 +30,19 @@ tas_percentil=sys.argv[3]
 uhi=sys.argv[4]
 
 def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
+    index=0
     for date in AF_dates: # First, concatenate mean monthly temperatures for all dates
         mean_summer_temperatures_date=meanSummerTemperatures(path,date,rcp_scenario, ssp_scenario, tas_percentil,uhi)
         # Calculate the difference in mean summer temperatures
         year=int(date[0:4]) #get first year from the date string
         for year_index in range(5):
-            if year_index==0:
+            index=index+year_index
+            if index==0:
                 mean_summer_temperatures_date_diff=np.zeros((90,134))
             else:
                 mean_summer_temperatures_date_diff=np.dstack((mean_summer_temperatures_date_diff,np.squeeze(mean_summer_temperatures_date[year_index,:,:]-mean_summer_temperatures_date[year_index-1,:,:])))
     # Shuffle dimensions around to fit NC standard (time,lat,lon)
-    mean_summer_temperatures_date_diff=np.transpose(mean_summer_temperatures_date_diff, (0, 2, 1))
+    mean_summer_temperatures_date_diff=np.transpose(mean_summer_temperatures_date_diff, (2, 0, 1))
     print(mean_summer_temperatures_date_diff.shape)
     template_file = path + '/Masks/year_template/year_template.nc'
     with xr.open_dataset(template_file) as yearly_mask:
