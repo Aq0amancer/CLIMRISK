@@ -33,35 +33,43 @@ def AF(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     '''
     This function takes apparent temperature (AT) estimates and generates the fraction of deaths attributable to heat (AF)
     '''
-    baccini_data = scipy.io.loadmat(path+'/Masks/baccini_matrix_acclimatize_'+rcp_scenario +'_'+ ssp_scenario+'_'+ tas_percentil+'_'+ uhi +'.mat') # data for thresholds, with acclimatization
-    h=baccini_data['baccini_matrix']
-    b=baccini_data['baccini_variance']
+    baccini_data = scipy.io.loadmat(path+'/Masks/baccini_matrix_acclimatized_'+rcp_scenario +'_'+ ssp_scenario+'_'+ tas_percentil+'pctl_'+ uhi +'.mat') # data for thresholds, with acclimatization
+    #h=baccini_data['baccini_matrix_acclimatized']
+    #b=baccini_data['baccini_variance']
     #AF_all=np.empty((80,90,134))
     for date in AF_dates:
-        with xr.open_dataset(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AT_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc') as climate_data:
-            AT=climate_data['apparent_tas'] # import AT
-            #print(np.nanmax(AT))
-            #print(baccini_matrix.shape)
-            #at_boolean=np.greater(AT,h) # is the temperature above
-            #AF=1-(1/(np.exp(b*(AT-h)*at_boolean)))
-            AF=1-(1/(np.exp(b*(AT-h))))
-            AF=AF.clip(min=0)
-            climate_data=climate_data.assign(attributable_fraction=AF)
-            # Generate average AF
-            year = int(date[0:4])  # get first year from the date string
-            AF_year=np.empty((5,90,134))
-            for index,year_value in enumerate(range(year, year+5)):
-                AF_year[index,:,:] = np.mean(climate_data['attributable_fraction'].sel(time=slice(str(year_value)+'-4', str(year_value)+'-9')), axis=0)
-                #print(np.nanmax(AF_year))
-            if date == '20210101-20251231':
-                AF_all=AF_year
-            else:
-                AF_all=np.concatenate((AF_all,AF_year),axis=0)
+        year=int(date[0:4]) #get first year from the date string
+        for year_value in range(year,year+5):
+            h=baccini_data['baccini_matrix_acclimatized'][:,:,year_value-2020]
+            b=baccini_data['baccini_variance'][:,:,year_value-2020]
+            with xr.open_dataset(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AT_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc').sel(time=year_value) as climate_data:
+                AT=climate_data['apparent_tas'] # import AT
+                #print(np.nanmax(AT))
+                #print(baccini_matrix.shape)
+                #at_boolean=np.greater(AT,h) # is the temperature above
+                #AF=1-(1/(np.exp(b*(AT-h)*at_boolean)))
+                AF=1-(1/(np.exp(b*(AT-h))))
+                AF=AF.clip(min=0)
+                if year_value == '2021':
+                    AF_date=AF
+                else:
+                    AF_date=np.concatenate((AF_date,AF),axis=0)
+        climate_data=climate_data.assign(attributable_fraction=AF_date)
+        # Generate average AF
+        year = int(date[0:4])  # get first year from the date string
+        AF_year=np.empty((5,90,134))
+        for index,year_value in enumerate(range(year, year+5)):
+            AF_year[index,:,:] = np.mean(climate_data['attributable_fraction'].sel(time=slice(str(year_value)+'-4', str(year_value)+'-9')), axis=0)
+            #print(np.nanmax(AF_year))
+        if date == '20210101-20251231':
+            AF_all=AF_year
+        else:
+            AF_all=np.concatenate((AF_all,AF_year),axis=0)
             #climate_data.close()
     # Save for matlab
     AF_dict={"AF": AF_all}
     scipy.io.savemat(path+'/AF_' + rcp_scenario +
-                     '_' + ssp_scenario + '_' + tas_percentil + 'th_2021-2100_' + uhi + '.mat', AF_dict)
+                    '_' + ssp_scenario + '_' + tas_percentil + 'th_2021-2100_' + uhi + '.mat', AF_dict)
     #climate_data.to_netcdf(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AF_' + rcp_scenario +
     #                       '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc')
     return AF

@@ -64,6 +64,6 @@ def acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi):
             'Urban Heat Island(UHI)':uhi})
 
         # Save to NCDF4
-        ds.to_netcdf(path + '/CLIMRISK temperatures/Mean_monthly_tas_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + uhi + '.nc')
+        ds.to_netcdf(path + '/CLIMRISK temperatures/Diff_Mean_monthly_tas_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + uhi + '.nc')
 
 acclimatization(rcp_scenario, ssp_scenario, tas_percentil, uhi)
