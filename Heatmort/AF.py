@@ -33,7 +33,7 @@ def AF(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     '''
     This function takes apparent temperature (AT) estimates and generates the fraction of deaths attributable to heat (AF)
     '''
-    baccini_data = scipy.io.loadmat(path+'/Masks/baccini_matrix.mat')
+    baccini_data = scipy.io.loadmat(path+'/Masks/baccini_matrix_acclimatize_'+rcp_scenario +'_'+ ssp_scenario+'_'+ tas_percentil+'_'+ uhi +'.mat') # data for thresholds, with acclimatization
     h=baccini_data['baccini_matrix']
     b=baccini_data['baccini_variance']
     #AF_all=np.empty((80,90,134))
