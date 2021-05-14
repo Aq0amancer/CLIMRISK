@@ -40,20 +40,23 @@ def AF(rcp_scenario, ssp_scenario, tas_percentil, uhi):
     for date in AF_dates:
         year=int(date[0:4]) #get first year from the date string
         for year_value in range(year,year+5):
-            h=baccini_data['baccini_matrix_acclimatized'][:,:,year_value-2020]
-            b=baccini_data['baccini_variance'][:,:,year_value-2020]
-            with xr.open_dataset(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AT_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc').sel(time=year_value) as climate_data:
-                AT=climate_data['apparent_tas'] # import AT
+            with xr.open_dataset(path+'/CLIMRISK temperatures/AT/'+rcp_scenario+'/AT_' + rcp_scenario + '_' + ssp_scenario + '_' + tas_percentil + 'th_' + date + '_' + uhi + '.nc') as climate_data:
+                h=baccini_data['baccini_matrix_acclimatized'][:,:,year_value-2021]
+                b=baccini_data['baccini_variance']
+                climate_data_year=climate_data.sel(time=str(year_value))
+                AT=climate_data_year['apparent_tas'] # import AT
                 #print(np.nanmax(AT))
                 #print(baccini_matrix.shape)
                 #at_boolean=np.greater(AT,h) # is the temperature above
                 #AF=1-(1/(np.exp(b*(AT-h)*at_boolean)))
                 AF=1-(1/(np.exp(b*(AT-h))))
                 AF=AF.clip(min=0)
-                if year_value == '2021':
+                if year_value == year:
                     AF_date=AF
                 else:
                     AF_date=np.concatenate((AF_date,AF),axis=0)
+                #print(AF_date.shape)
+        AF_date = xr.DataArray(AF_date, coords={'lat': climate_data['lat'], 'lon': climate_data['lon'], 'time': climate_data['time']}, dims=["time", "lat", "lon"])
         climate_data=climate_data.assign(attributable_fraction=AF_date)
         # Generate average AF
         year = int(date[0:4])  # get first year from the date string

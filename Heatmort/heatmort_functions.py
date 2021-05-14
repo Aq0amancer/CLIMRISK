@@ -64,6 +64,7 @@ def AF(rcp_scenario, ssp_scenario, tas_percentil, uhi):
             #AF=1-(1/(np.exp(b*(AT-h)*at_boolean)))
             AF=1-(1/(np.exp(b*(AT-h))))
             AF=AF.clip(min=0)
+            print(AF.shape)
             climate_data=climate_data.assign(attributable_fraction=AF)
             # Generate average AF
             year = int(date[0:4])  # get first year from the date string
